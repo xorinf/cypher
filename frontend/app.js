@@ -3,7 +3,7 @@
  * Handles form submission, API communication, and results display
  */
 
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'http://localhost:5001/api';
 
 let currentResults = null;
 
@@ -18,18 +18,18 @@ const resultsContainer = document.getElementById('resultsContainer');
 // Form submission handler
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const formData = {
         hallTicket: document.getElementById('hallTicket').value.trim(),
         examType: document.getElementById('examType').value,
         viewType: document.getElementById('viewType').value
     };
-    
+
     if (!formData.hallTicket) {
         showError('Please enter your hall ticket number');
         return;
     }
-    
+
     await fetchResults(formData);
 });
 
@@ -40,7 +40,7 @@ async function fetchResults(formData) {
     try {
         // Show loading state
         showLoading();
-        
+
         const response = await fetch(`${API_BASE_URL}/fetch-results`, {
             method: 'POST',
             headers: {
@@ -48,19 +48,19 @@ async function fetchResults(formData) {
             },
             body: JSON.stringify(formData)
         });
-        
+
         if (!response.ok) {
             const error = await response.json();
             throw new Error(error.error || 'Failed to fetch results');
         }
-        
+
         const data = await response.json();
         currentResults = data;
-        
+
         // Hide loading and show results
         hideLoading();
         displayResults(data);
-        
+
     } catch (error) {
         hideLoading();
         showError(error.message);
@@ -73,11 +73,11 @@ async function fetchResults(formData) {
  */
 function displayResults(data) {
     const { studentInfo, subjects, analytics, semesterInfo } = data;
-    
+
     // Hide form card and show results
     form.style.display = 'none';
     resultsContainer.style.display = 'block';
-    
+
     // Build results HTML
     resultsContainer.innerHTML = `
         <!-- Student Information Card -->
@@ -204,7 +204,7 @@ async function exportResults(format) {
         showError('No results available to export');
         return;
     }
-    
+
     try {
         const response = await fetch(`${API_BASE_URL}/export`, {
             method: 'POST',
@@ -216,11 +216,11 @@ async function exportResults(format) {
                 format: format
             })
         });
-        
+
         if (!response.ok) {
             throw new Error('Export failed');
         }
-        
+
         // Download the file
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);
@@ -231,7 +231,7 @@ async function exportResults(format) {
         a.click();
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
-        
+
     } catch (error) {
         showError('Failed to export results. Please try again.');
         console.error('Export error:', error);
