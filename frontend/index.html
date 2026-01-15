@@ -1,38 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Cypher - Automated CampX results retrieval and analysis for Anurag University students">
-    <title>Cypher | CampX Results Analyzer</title>
+    <meta name="description" content="Cypher - Automated university results retrieval and analysis tool">
+    <title>Cypher | University Results Analyzer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
     <!-- Background decoration -->
     <div class="bg-decoration"></div>
-    
+
     <!-- Main container -->
     <div class="container">
         <!-- Header -->
         <header class="header">
             <div class="logo">
                 <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
-                    <rect width="40" height="40" rx="12" fill="url(#gradient1)"/>
-                    <path d="M20 10L30 20L20 30" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M10 20H25" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                    <rect width="40" height="40" rx="12" fill="url(#gradient1)" />
+                    <path d="M20 10L30 20L20 30" stroke="white" stroke-width="2.5" stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    <path d="M10 20H25" stroke="white" stroke-width="2.5" stroke-linecap="round" />
                     <defs>
                         <linearGradient id="gradient1" x1="0" y1="0" x2="40" y2="40">
-                            <stop offset="0%" stop-color="#667eea"/>
-                            <stop offset="100%" stop-color="#764ba2"/>
+                            <stop offset="0%" stop-color="#667eea" />
+                            <stop offset="100%" stop-color="#764ba2" />
                         </linearGradient>
                     </defs>
                 </svg>
                 <h1>Cypher</h1>
             </div>
-            <p class="tagline">CampX Results Analyzer</p>
+            <p class="tagline">Results Analyzer</p>
         </header>
 
         <!-- Main card -->
@@ -46,30 +50,27 @@
                 <!-- Hall Ticket Input -->
                 <div class="form-group">
                     <label for="hallTicket">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                            <circle cx="12" cy="7" r="4"/>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
                         </svg>
                         Hall Ticket Number
                     </label>
-                    <input 
-                        type="text" 
-                        id="hallTicket" 
-                        name="hallTicket" 
-                        placeholder="Enter your hall ticket number"
-                        required
-                    >
+                    <input type="text" id="hallTicket" name="hallTicket" placeholder="Enter your hall ticket number"
+                        required>
                 </div>
 
                 <!-- Exam Type Select -->
                 <div class="form-group">
                     <label for="examType">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <line x1="16" y1="13" x2="8" y2="13"/>
-                            <line x1="16" y1="17" x2="8" y2="17"/>
-                            <polyline points="10 9 9 9 8 9"/>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                            <polyline points="14 2 14 8 20 8" />
+                            <line x1="16" y1="13" x2="8" y2="13" />
+                            <line x1="16" y1="17" x2="8" y2="17" />
+                            <polyline points="10 9 9 9 8 9" />
                         </svg>
                         Exam Type
                     </label>
@@ -84,9 +85,10 @@
                 <!-- View Type Select -->
                 <div class="form-group">
                     <label for="viewType">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                            <circle cx="12" cy="12" r="3"/>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
                         </svg>
                         View Type
                     </label>
@@ -99,9 +101,10 @@
                 <!-- Submit Button -->
                 <button type="submit" class="btn-submit" id="submitBtn">
                     <span class="btn-text">Get Results</span>
-                    <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                        <polyline points="12 5 19 12 12 19"/>
+                    <svg class="btn-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
                     </svg>
                 </button>
             </form>
@@ -115,9 +118,9 @@
             <!-- Error State -->
             <div id="errorState" class="error-state" style="display: none;">
                 <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10"/>
-                    <line x1="12" y1="8" x2="12" y2="12"/>
-                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
                 </svg>
                 <h3>Oops! Something went wrong</h3>
                 <p id="errorMessage"></p>
@@ -132,10 +135,11 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p>Built for Anurag University students | CampX Integration</p>
+            <p>Built for easier academic result tracking</p>
         </footer>
     </div>
 
     <script src="app.js"></script>
 </body>
+
 </html>

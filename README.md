@@ -1,46 +1,33 @@
-# Cypher - Results Tracker
-## ⚠️ Disclaimer
+# Cypher - University Results Analyzer
 
-**Cypher** is a personal, experimental project created for learning and exploration purposes only.
+> **⚠️ Educational Project Disclaimer**
+> 
+> This is a personal learning project created for educational purposes. It demonstrates web scraping, data parsing, and analytics techniques. This project is not officially affiliated with any university or portal system. Use responsibly and only with proper authorization for your own academic data.
 
-- This project is **not officially affiliated with, endorsed by, or supported by** the university or the **CampX** system.
-- All data access and analysis are intended **strictly for personal academic use**.
-- No attempt is made to bypass security mechanisms, misuse credentials, or access data without proper authorization.
+## Overview
 
-### Compliance Notice
+Cypher is a web application designed to automate the retrieval and analysis of university examination results. It provides tools for fetching result data from university portals, parsing structured information, and generating analytics on academic performance.
 
-If this project or its methodology is found to violate any terms of service, policies, or regulations of **CampX** or the university:
-
-- I will **immediately remove this repository**
-- I will **stop using this method of result retrieval**
-- Any related tools or automation will be **discontinued**
-
-This repository exists purely as a **technical demonstration** and will be taken down upon request or in case of any compliance concerns.
-
-Cypher is a web/app application designed to automate the retrieval and analysis of college examination results. By integrating with the **CampX** system used by the university, Cypher fetches result spreadsheets and provides advanced tools for score analysis and academic performance tracking.
-
-Cypher is a full-stack web application designed to automate the retrieval and analysis of college examination results from Anurag University's **CampX** system. It fetches result data, generates downloadable spreadsheets, and provides advanced analytics on academic performance.
-
-![Cypher Application](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
 ![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python)
 ![Flask](https://img.shields.io/badge/Flask-3.0-black?style=for-the-badge&logo=flask)
+![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
 
 ---
 
 ## 🎯 Features
 
 ### Core Functionality
-- **🔗 CampX Integration**: Direct integration with Anurag University's CampX system
-- **📊 Automated Data Retrieval**: Web scraping with Selenium for seamless result fetching
+- **📊 Automated Data Retrieval**: Web scraping with Selenium for result fetching
 - **📈 Advanced Analytics**: GPA calculation, grade distribution, and performance insights
 - **📑 Export Options**: Download results as CSV or Excel with detailed formatting
 - **🎨 Modern UI**: Premium dark theme with smooth animations and responsive design
+- **🔒 Secure Configuration**: Environment-based configuration for sensitive URLs
 
 ### Analytics Dashboard
 - Real-time GPA calculation
 - Subject-wise performance analysis
 - Pass/fail status tracking
-- Grade distribution visualization
+- Grade distribution visualization  
 - Performance level classification
 
 ---
@@ -48,16 +35,16 @@ Cypher is a full-stack web application designed to automate the retrieval and an
 ## 🏗️ Architecture
 
 ### Backend (Python + Flask)
-- **Flask API Server** (`backend/app.py`)
-- **Web Scraper** (`backend/scraper.py`) - Selenium-based automation
-- **HTML Parser** (`backend/parser.py`) - BeautifulSoup data extraction
-- **Analytics Engine** (`backend/analytics.py`) - Performance calculations
-- **Data Exporter** (`backend/exporter.py`) - CSV/Excel generation
+- **Flask API Server** ([backend/app.py](file:///Users/yashhwanth/Documents/cypher/backend/app.py))
+- **Web Scraper** ([backend/scraper.py](file:///Users/yashhwanth/Documents/cypher/backend/scraper.py)) - Selenium-based automation
+- **HTML Parser** ([backend/parser.py](file:///Users/yashhwanth/Documents/cypher/backend/parser.py)) - BeautifulSoup data extraction
+- **Analytics Engine** ([backend/analytics.py](file:///Users/yashhwanth/Documents/cypher/backend/analytics.py)) - Performance calculations
+- **Data Exporter** ([backend/exporter.py](file:///Users/yashhwanth/Documents/cypher/backend/exporter.py)) - CSV/Excel generation
 
 ### Frontend (HTML + CSS + JavaScript)
-- **Responsive UI** (`frontend/index.html`)
-- **Premium Styling** (`frontend/styles.css`) - Dark theme with gradients
-- **Dynamic Rendering** (`frontend/app.js`) - API integration and state management
+- **Responsive UI** ([frontend/index.html](file:///Users/yashhwanth/Documents/cypher/frontend/index.html))
+- **Premium Styling** ([frontend/styles.css](file:///Users/yashhwanth/Documents/cypher/frontend/styles.css)) - Dark theme with gradients
+- **Dynamic Rendering** ([frontend/app.js](file:///Users/yashhwanth/Documents/cypher/frontend/app.js)) - API integration and state management
 
 ---
 
@@ -72,44 +59,45 @@ Cypher is a full-stack web application designed to automate the retrieval and an
 
 1. **Clone the repository**
    ```bash
-   git clone git@github.com:xorinf/cypher.git
+   git clone https://github.com/xorinf/cypher.git
    cd cypher
    ```
 
 2. **Set up Python virtual environment**
    ```bash
    python3 -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   source venv/bin/activate  # On Windows: venv\\Scripts\\activate
    ```
 
 3. **Install dependencies**
    ```bash
    cd backend
    pip install -r requirements.txt
+   cd ..
    ```
 
-4. **Install ChromeDriver**
-   ```bash
-   # macOS
-   brew install chromedriver
-   
-   # Linux
-   sudo apt-get install chromium-chromedriver
-   
-   # Or download from: https://chromedriver.chromium.org/
-   ```
+4. **Install ChromeDriver** (will be handled automatically by webdriver-manager)
+   The application uses `webdriver-manager` which automatically downloads the correct ChromeDriver version.
 
 5. **Configure environment variables**
    ```bash
-   cd ..
    cp .env.example .env
-   # Edit .env if needed
+   ```
+   
+   Then edit `.env` and set:
+   ```env
+   # Replace with your university's results portal URL
+   CAMPX_BASE_URL=https://your-university-portal.edu/results
+   FLASK_PORT=5000
+   FLASK_DEBUG=True
+   EXPORT_DIR=./exports
    ```
 
 ### Running the Application
 
 1. **Start the backend server**
    ```bash
+   source venv/bin/activate
    cd backend
    python app.py
    ```
@@ -127,9 +115,9 @@ Cypher is a full-stack web application designed to automate the retrieval and an
 
 ## 📖 Usage
 
-1. **Enter Hall Ticket Number**: Input your student hall ticket number
-2. **Select Exam Type**: Choose the examination type (optional)
-3. **Select View Type**: Choose "All Semesters" or "Current Semester"
+1. **Configure Your Portal**: Edit `.env` with your university's results portal URL
+2. **Enter Hall Ticket Number**: Input your student hall ticket number
+3. **Select Options**: Choose examination type and semester view
 4. **Fetch Results**: Click "Get Results" to retrieve your data
 5. **View Analytics**: Review your GPA, grades, and performance summary
 6. **Export Data**: Download results as CSV or Excel
@@ -143,7 +131,7 @@ Cypher is a full-stack web application designed to automate the retrieval and an
 | **Backend** | Python 3.8+, Flask 3.0 |
 | **Web Scraping** | Selenium 4.16, BeautifulSoup 4.12 |
 | **Data Processing** | Pandas 2.1, OpenPyXL 3.1 |
-| **Frontend** | HTML5, CSS3 (Custom), Vanilla JavaScript |
+| **Frontend** | HTML5, CSS3, Vanilla JavaScript |
 | **Styling** | CSS Variables, Gradients, Animations |
 | **Fonts** | Google Fonts (Inter) |
 
@@ -164,6 +152,10 @@ cypher/
 │   ├── index.html          # Main UI page
 │   ├── styles.css          # Premium styling
 │   └── app.js              # Frontend logic
+├── tests/
+│   ├── test_scraper.py     # Test suite
+│   ├── fixtures/           # Mock test data
+│   └── README.md           # Testing guide
 ├── .env.example            # Environment template
 ├── .gitignore              # Git ignore rules
 └── README.md               # This file
@@ -171,49 +163,78 @@ cypher/
 
 ---
 
-## 🔧 Configuration
+## 🧪 Testing
 
-Edit `.env` file to customize:
+### Run Tests
 
-```env
-CAMPX_BASE_URL=https://aupulse.campx.in/aupulse/ums/results
-FLASK_PORT=5000
-FLASK_DEBUG=True
-EXPORT_DIR=./exports
+```bash
+# Activate virtual environment
+source venv/bin/activate
+
+# Run test suite
+python tests/test_scraper.py
 ```
+
+The test suite offers two modes:
+1. **Mock Data Testing**: Tests parser with sanitized fixtures (no network required)
+2. **Real Data Testing**: Tests full scraper with your hallticket (requires configuration)
+
+See [tests/README.md](file:///Users/yashhwanth/Documents/cypher/tests/README.md) for detailed testing instructions.
 
 ---
 
-## 🧪 Testing
+## 🔧 Configuration
 
-To test with a hall ticket number:
-1. Start the backend server
-2. Open the frontend in browser
-3. Enter a valid hall ticket number
-4. Verify results are fetched and displayed correctly
+All sensitive configuration is managed through the `.env` file:
+
+```env
+# Your university's results portal URL
+CAMPX_BASE_URL=https://your-university-portal.edu/results
+
+# Flask server port
+FLASK_PORT=5000
+
+# Enable debug mode (disable in production)
+FLASK_DEBUG=True
+
+# Directory for exported files
+EXPORT_DIR=./exports
+```
+
+> **Security Note**: Never commit your `.env` file to version control. It's already in `.gitignore`.
+
+---
+
+## 🔒 Security & Privacy
+
+- **No Hardcoded URLs**: All portal URLs are configurable via environment variables
+- **Personal Data Protection**: Test fixtures use sanitized mock data
+- **Secure Credentials**: Your hallticket and results are never stored or transmitted
+- **Local Processing**: All data processing happens locally on your machine
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit issues or pull requests.
+Contributions are welcome! Please:
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
 
 ---
 
 ## 📝 License
 
-This project is built for educational purposes for Anurag University students.
+This project is for educational purposes. Use responsibly and only with proper authorization.
 
 ---
 
 ## 🙏 Acknowledgments
 
-- Built for Anurag University students
-- Integrates with CampX Digital Campus Ecosystem
+- Built as a learning project for web scraping and data analysis
+- Demonstrates integration with university portal systems
 
 ---
 
-**Made with ❤️ for easier result checking**
-=======
-The primary goal of Cypher is to simplify the process of checking and analyzing college results, making it easier me to track my academic progress without navigating complex legacy systems.
-- **TBH**: im bored.
+**Made with ❤️ for easier academic result tracking**

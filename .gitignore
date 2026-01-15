@@ -2,6 +2,7 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.pyc
 venv/
 env/
 *.so
@@ -30,3 +31,9 @@ chromedriver
 geckodriver
 *.log
 screenshots/
+
+# Test outputs (may contain sensitive data)
+test_output.html
+test_output.json
+**/test_output.*
+backend/test_scraper.py

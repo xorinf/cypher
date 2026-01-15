@@ -1,0 +1,72 @@
+{
+    "studentInfo": {
+        "hallTicket": "XXENG001X01",
+        "name": "JOHN DOE",
+        "program": "B TECH in COMPUTER SCIENCE"
+    },
+    "subjects": [
+        {
+            "code": "CS101",
+            "name": "Data Structures and Algorithms",
+            "credits": "3.00",
+            "grade": "A",
+            "status": "P"
+        },
+        {
+            "code": "CS102",
+            "name": "Database Management Systems",
+            "credits": "3.00",
+            "grade": "A+",
+            "status": "P"
+        },
+        {
+            "code": "CS103",
+            "name": "Operating Systems",
+            "credits": "3.00",
+            "grade": "B+",
+            "status": "P"
+        },
+        {
+            "code": "CS104",
+            "name": "Computer Networks",
+            "credits": "3.00",
+            "grade": "A",
+            "status": "P"
+        },
+        {
+            "code": "CS105",
+            "name": "Software Engineering",
+            "credits": "3.00",
+            "grade": "B",
+            "status": "P"
+        },
+        {
+            "code": "EN101",
+            "name": "Technical Communication",
+            "credits": "2.00",
+            "grade": "A",
+            "status": "P"
+        },
+        {
+            "code": "CS101L",
+            "name": "Data Structures Lab",
+            "credits": "1.00",
+            "grade": "A+",
+            "status": "P"
+        },
+        {
+            "code": "CS102L",
+            "name": "Database Lab",
+            "credits": "1.00",
+            "grade": "A",
+            "status": "P"
+        }
+    ],
+    "semesterInfo": {
+        "semester": 5,
+        "sgpa": 8.75,
+        "cgpa": 8.65,
+        "totalCredits": 19,
+        "earnedCredits": 19
+    }
+}
