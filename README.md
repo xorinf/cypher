@@ -1,6 +1,6 @@
 # Cypher
 
-**Automated CampX Results Retrieval and Analysis System**
+Cypher is a web/app application designed to automate the retrieval and analysis of college examination results. By integrating with the **CampX** system used by the university, Cypher fetches result spreadsheets and provides advanced tools for score analysis and academic performance tracking.
 
 Cypher is a full-stack web application designed to automate the retrieval and analysis of college examination results from Anurag University's **CampX** system. It fetches result data, generates downloadable spreadsheets, and provides advanced analytics on academic performance.
 
@@ -197,3 +197,7 @@ This project is built for educational purposes for Anurag University students.
 ---
 
 **Made with ❤️ for easier result checking**
+=======
+The primary goal of Cypher is to simplify the process of checking and analyzing college results, making it easier me to track my academic progress without navigating complex legacy systems.
+- **TBH**: im bored.
+>>>>>>> 5ba0f5ca9875b490b0793cf770f6e6c4dda7d399
