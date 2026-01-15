@@ -12,3 +12,4 @@ Cypher is a web/app application designed to automate the retrieval and analysis 
 ## Goal
 
 The primary goal of Cypher is to simplify the process of checking and analyzing college results, making it easier me to track my academic progress without navigating complex legacy systems.
+- **TBH**: im bored.
