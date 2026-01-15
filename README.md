@@ -1,6 +1,6 @@
 # Cypher
 
-Cypher is a web application designed to automate the retrieval and analysis of college examination results. By integrating with the **CampX** system used by the university, Cypher fetches result spreadsheets and provides advanced tools for score analysis and academic performance tracking.
+Cypher is a web/app application designed to automate the retrieval and analysis of college examination results. By integrating with the **CampX** system used by the university, Cypher fetches result spreadsheets and provides advanced tools for score analysis and academic performance tracking.
 
 ## Key Features
 
@@ -11,4 +11,4 @@ Cypher is a web application designed to automate the retrieval and analysis of c
 
 ## Goal
 
-The primary goal of Cypher is to simplify the process of checking and analyzing college results, making it easier for students to track their academic progress without navigating complex legacy systems.
+The primary goal of Cypher is to simplify the process of checking and analyzing college results, making it easier me to track my academic progress without navigating complex legacy systems.
