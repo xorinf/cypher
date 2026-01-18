@@ -37,3 +37,6 @@ test_output.html
 test_output.json
 **/test_output.*
 backend/test_scraper.py
+
+# Generated files from tests
+generated/

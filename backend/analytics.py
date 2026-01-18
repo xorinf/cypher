@@ -91,7 +91,7 @@ class AnalyticsEngine:
             grade = subject.get('grade', '').upper()
             subject_name = subject.get('name', 'Unknown Subject')
             
-            if grade in ['F', 'Ab', 'I']:
+            if grade in ['F', 'AB', 'I']:
                 failed += 1
                 failed_subjects.append({
                     'name': subject_name,

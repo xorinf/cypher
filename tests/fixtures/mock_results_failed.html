@@ -1,0 +1,123 @@
+<!--
+Mock results HTML with FAILED subjects
+For testing edge cases with fail grades and failed subject display
+-->
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>University Results Portal - Failed Subjects</title>
+</head>
+
+<body>
+    <div id="root">
+        <div class="results-container">
+            <h1>Exam Results</h1>
+
+            <div class="student-info">
+                <div>
+                    <h6>Hallticket number</h6>
+                    <p>XXENG002X02</p>
+                </div>
+                <div>
+                    <h6>Student Name</h6>
+                    <p>JANE SMITH</p>
+                </div>
+                <div>
+                    <h6>Program</h6>
+                    <p>B TECH in ELECTRONICS</p>
+                </div>
+            </div>
+
+            <div class="cgpa-summary">CGPA : 5.82</div>
+
+            <div class="semester-results">
+                <h6>Semester - 4</h6>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>S.No.</th>
+                            <th>Course Code</th>
+                            <th>Course Name</th>
+                            <th>Credits</th>
+                            <th>Grade</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: center;">1</td>
+                            <td style="text-align: center;">EC201</td>
+                            <td>Digital Electronics</td>
+                            <td style="text-align: center;">3.00</td>
+                            <td style="text-align: center;">B+</td>
+                            <td style="text-align: center;">
+                                <div style="color: green;">P</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">2</td>
+                            <td style="text-align: center;">EC202</td>
+                            <td>Signals and Systems</td>
+                            <td style="text-align: center;">3.00</td>
+                            <td style="text-align: center;">F</td>
+                            <td style="text-align: center;">
+                                <div style="color: red;">F</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">3</td>
+                            <td style="text-align: center;">EC203</td>
+                            <td>Control Systems</td>
+                            <td style="text-align: center;">3.00</td>
+                            <td style="text-align: center;">C</td>
+                            <td style="text-align: center;">
+                                <div style="color: green;">P</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">4</td>
+                            <td style="text-align: center;">EC204</td>
+                            <td>Electromagnetic Theory</td>
+                            <td style="text-align: center;">3.00</td>
+                            <td style="text-align: center;">Ab</td>
+                            <td style="text-align: center;">
+                                <div style="color: red;">F</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">5</td>
+                            <td style="text-align: center;">EC205</td>
+                            <td>Microprocessors</td>
+                            <td style="text-align: center;">3.00</td>
+                            <td style="text-align: center;">B</td>
+                            <td style="text-align: center;">
+                                <div style="color: green;">P</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: center;">6</td>
+                            <td style="text-align: center;">EC201L</td>
+                            <td>Digital Electronics Lab</td>
+                            <td style="text-align: center;">1.00</td>
+                            <td style="text-align: center;">A</td>
+                            <td style="text-align: center;">
+                                <div style="color: green;">P</div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="semester-summary">
+                    <div>SGPA : 5.43</div>
+                    <div>Total secured credits: 10 / 16</div>
+                </div>
+            </div>
+
+            <button type="button">Print</button>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -6,134 +6,101 @@
 
 ## Overview
 
-Cypher is a web application designed to automate the retrieval and analysis of university examination results. It provides tools for fetching result data from university portals, parsing structured information, and generating analytics on academic performance.
+Cypher is a web application that automates university examination result retrieval and analysis. It scrapes result data from portals, parses student information and grades, and generates performance analytics.
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python)
 ![Flask](https://img.shields.io/badge/Flask-3.0-black?style=for-the-badge&logo=flask)
-![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
+![Status](https://img.shields.io/badge/Status-v1.0-success?style=for-the-badge)
 
 ---
 
-## 🎯 Features
-
-### Core Functionality
-- **📊 Automated Data Retrieval**: Web scraping with Selenium for result fetching
-- **📈 Advanced Analytics**: GPA calculation, grade distribution, and performance insights
-- **📑 Export Options**: Download results as CSV or Excel with detailed formatting
-- **🎨 Modern UI**: Premium dark theme with smooth animations and responsive design
-- **🔒 Secure Configuration**: Environment-based configuration for sensitive URLs
-
-### Analytics Dashboard
-- Real-time GPA calculation
-- Subject-wise performance analysis
-- Pass/fail status tracking
-- Grade distribution visualization  
-- Performance level classification
-
----
-
-## 🏗️ Architecture
-
-### Backend (Python + Flask)
-- **Flask API Server** ([backend/app.py](file:///Users/yashhwanth/Documents/cypher/backend/app.py))
-- **Web Scraper** ([backend/scraper.py](file:///Users/yashhwanth/Documents/cypher/backend/scraper.py)) - Selenium-based automation
-- **HTML Parser** ([backend/parser.py](file:///Users/yashhwanth/Documents/cypher/backend/parser.py)) - BeautifulSoup data extraction
-- **Analytics Engine** ([backend/analytics.py](file:///Users/yashhwanth/Documents/cypher/backend/analytics.py)) - Performance calculations
-- **Data Exporter** ([backend/exporter.py](file:///Users/yashhwanth/Documents/cypher/backend/exporter.py)) - CSV/Excel generation
-
-### Frontend (HTML + CSS + JavaScript)
-- **Responsive UI** ([frontend/index.html](file:///Users/yashhwanth/Documents/cypher/frontend/index.html))
-- **Premium Styling** ([frontend/styles.css](file:///Users/yashhwanth/Documents/cypher/frontend/styles.css)) - Dark theme with gradients
-- **Dynamic Rendering** ([frontend/app.js](file:///Users/yashhwanth/Documents/cypher/frontend/app.js)) - API integration and state management
-
----
-
-## 🚀 Quick Start
+## 🚀 Quick Start (5 Minutes)
 
 ### Prerequisites
-- Python 3.8 or higher
-- Google Chrome browser (for Selenium)
+- Python 3.8+
+- Google Chrome browser
 - pip package manager
 
-### Installation
+### Step 1: Clone & Setup
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/xorinf/cypher.git
-   cd cypher
-   ```
+```bash
+# Clone the repository
+git clone https://github.com/xorinf/cypher.git
+cd cypher
 
-2. **Set up Python virtual environment**
-   ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # On Windows: venv\\Scripts\\activate
-   ```
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
 
-3. **Install dependencies**
-   ```bash
-   cd backend
-   pip install -r requirements.txt
-   cd ..
-   ```
+# Install dependencies
+pip install -r backend/requirements.txt
+```
 
-4. **Install ChromeDriver** (will be handled automatically by webdriver-manager)
-   The application uses `webdriver-manager` which automatically downloads the correct ChromeDriver version.
+### Step 2: Configure
 
-5. **Configure environment variables**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Then edit `.env` and set:
-   ```env
-   # Replace with your university's results portal URL
-   CAMPX_BASE_URL=https://your-university-portal.edu/results
-   FLASK_PORT=5000
-   FLASK_DEBUG=True
-   EXPORT_DIR=./exports
-   ```
+```bash
+# Copy example config
+cp .env.example .env
 
-### Running the Application
+# Edit .env with your portal URL
+nano .env  # or use any text editor
+```
 
-1. **Start the backend server**
-   ```bash
-   source venv/bin/activate
-   cd backend
-   python app.py
-   ```
-   Server will run on `http://localhost:5000`
+Set your university portal URL:
+```env
+CAMPX_BASE_URL=https://your-university-portal.edu/results
+```
 
-2. **Open the frontend**
-   Open `frontend/index.html` in your browser, or use a local server:
-   ```bash
-   cd frontend
-   python -m http.server 8080
-   ```
-   Navigate to `http://localhost:8080`
+### Step 3: Run
+
+**Terminal 1 - Backend:**
+```bash
+source venv/bin/activate
+cd backend && python app.py
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd frontend && python3 -m http.server 8080
+```
+
+**Open:** http://localhost:8080
 
 ---
 
 ## 📖 Usage
 
-1. **Configure Your Portal**: Edit `.env` with your university's results portal URL
-2. **Enter Hall Ticket Number**: Input your student hall ticket number
-3. **Select Options**: Choose examination type and semester view
-4. **Fetch Results**: Click "Get Results" to retrieve your data
-5. **View Analytics**: Review your GPA, grades, and performance summary
-6. **Export Data**: Download results as CSV or Excel
+1. Enter your **Hall Ticket Number**
+2. Select **Exam Type** (Regular/Supplementary)
+3. Choose **View Type** (All Semesters/Current)
+4. Click **Get Results**
+5. View analytics and **Export** as CSV/Excel
 
 ---
 
-## 🛠️ Tech Stack
+## 🧪 Testing
 
-| Component | Technology |
-|-----------|-----------|
-| **Backend** | Python 3.8+, Flask 3.0 |
-| **Web Scraping** | Selenium 4.16, BeautifulSoup 4.12 |
-| **Data Processing** | Pandas 2.1, OpenPyXL 3.1 |
-| **Frontend** | HTML5, CSS3, Vanilla JavaScript |
-| **Styling** | CSS Variables, Gradients, Animations |
-| **Fonts** | Google Fonts (Inter) |
+```bash
+# Activate virtual environment
+source venv/bin/activate
+
+# Run unit tests (27 tests)
+python -m pytest tests/test_units.py -v
+
+# Run real results test (generates HTML report)
+python tests/test_real_results.py
+# Report saved to: generated/results_report.html
+```
+
+---
+
+## 🎯 Features
+
+- **📊 Automated Scraping** - Selenium-based result fetching
+- **📈 GPA Analytics** - Automatic grade point calculation
+- **📑 Export Options** - Download as CSV or Excel
+- **🎨 Modern UI** - Dark theme with responsive design
+- **🔒 Secure** - Environment-based configuration
 
 ---
 
@@ -141,99 +108,59 @@ Cypher is a web application designed to automate the retrieval and analysis of u
 
 ```
 cypher/
-├── backend/
-│   ├── app.py              # Flask API server
-│   ├── scraper.py          # Selenium web scraper
-│   ├── parser.py           # HTML parser
-│   ├── analytics.py        # Analytics engine
-│   ├── exporter.py         # CSV/Excel exporter
-│   └── requirements.txt    # Python dependencies
-├── frontend/
-│   ├── index.html          # Main UI page
-│   ├── styles.css          # Premium styling
-│   └── app.js              # Frontend logic
-├── tests/
-│   ├── test_scraper.py     # Test suite
-│   ├── fixtures/           # Mock test data
-│   └── README.md           # Testing guide
-├── .env.example            # Environment template
-├── .gitignore              # Git ignore rules
-└── README.md               # This file
+├── backend/           # Flask API + Scraper
+│   ├── app.py         # API server
+│   ├── scraper.py     # Selenium scraper  
+│   ├── parser.py      # HTML parser
+│   ├── analytics.py   # GPA calculations
+│   └── exporter.py    # CSV/Excel export
+├── frontend/          # Web UI
+│   ├── index.html     # Main page
+│   ├── styles.css     # Styling
+│   └── app.js         # Frontend logic
+├── tests/             # Test suite
+│   ├── test_units.py  # Unit tests
+│   └── fixtures/      # Mock data
+├── generated/         # Test outputs (gitignored)
+├── .env.example       # Config template
+└── README.md          # This file
 ```
 
 ---
 
-## 🧪 Testing
+## 🛠️ Tech Stack
 
-### Run Tests
-
-```bash
-# Activate virtual environment
-source venv/bin/activate
-
-# Run test suite
-python tests/test_scraper.py
-```
-
-The test suite offers two modes:
-1. **Mock Data Testing**: Tests parser with sanitized fixtures (no network required)
-2. **Real Data Testing**: Tests full scraper with your hallticket (requires configuration)
-
-See [tests/README.md](file:///Users/yashhwanth/Documents/cypher/tests/README.md) for detailed testing instructions.
+| Component | Technology |
+|-----------|-----------|
+| Backend | Python 3.8+, Flask 3.0 |
+| Scraping | Selenium 4.16, BeautifulSoup 4.12 |
+| Data | Pandas 2.1, OpenPyXL 3.1 |
+| Frontend | HTML5, CSS3, JavaScript |
 
 ---
 
-## 🔧 Configuration
+## 🔒 Security
 
-All sensitive configuration is managed through the `.env` file:
-
-```env
-# Your university's results portal URL
-CAMPX_BASE_URL=https://your-university-portal.edu/results
-
-# Flask server port
-FLASK_PORT=5000
-
-# Enable debug mode (disable in production)
-FLASK_DEBUG=True
-
-# Directory for exported files
-EXPORT_DIR=./exports
-```
-
-> **Security Note**: Never commit your `.env` file to version control. It's already in `.gitignore`.
-
----
-
-## 🔒 Security & Privacy
-
-- **No Hardcoded URLs**: All portal URLs are configurable via environment variables
-- **Personal Data Protection**: Test fixtures use sanitized mock data
-- **Secure Credentials**: Your hallticket and results are never stored or transmitted
-- **Local Processing**: All data processing happens locally on your machine
+- All URLs configured via `.env` (never hardcoded)
+- Personal data processed locally only
+- Test fixtures use sanitized mock data
+- `.env` is gitignored
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please:
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Submit a pull request
+2. Create feature branch (`git checkout -b feature/amazing`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing`)
+5. Open a Pull Request
 
 ---
 
 ## 📝 License
 
-This project is for educational purposes. Use responsibly and only with proper authorization.
-
----
-
-## 🙏 Acknowledgments
-
-- Built as a learning project for web scraping and data analysis
-- Demonstrates integration with university portal systems
+Educational project - use responsibly with proper authorization.
 
 ---
 

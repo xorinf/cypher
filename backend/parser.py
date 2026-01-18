@@ -52,32 +52,36 @@ class ResultsParser:
         """Extract basic student information"""
         info = {}
         
-        # This is a placeholder - actual selectors will depend on the HTML structure
-        # We'll need to inspect the actual results page to get correct selectors
-        
-        # Try common patterns for student information
+        # Try to extract from MUI structure (h6 label + p value)
         try:
-            # Look for hall ticket/roll number
-            hall_ticket_elem = soup.find(text=re.compile(r'Hall Ticket|Roll No|Student ID', re.I))
-            if hall_ticket_elem:
-                parent = hall_ticket_elem.find_parent()
-                if parent:
-                    info['hallTicket'] = parent.get_text(strip=True).split(':')[-1].strip()
+            # Find all h6 elements (these are typically labels in MUI)
+            h6_elements = soup.find_all('h6')
             
-            # Look for student name
-            name_elem = soup.find(text=re.compile(r'Student Name|Name', re.I))
-            if name_elem:
-                parent = name_elem.find_parent()
-                if parent:
-                    info['name'] = parent.get_text(strip=True).split(':')[-1].strip()
-            
-            # Look for program/course
-            program_elem = soup.find(text=re.compile(r'Program|Course|Branch', re.I))
-            if program_elem:
-                parent = program_elem.find_parent()
-                if parent:
-                    info['program'] = parent.get_text(strip=True).split(':')[-1].strip()
+            for h6 in h6_elements:
+                label_text = h6.get_text(strip=True).lower()
+                
+                # Find the next sibling p element which contains the value
+                next_p = h6.find_next_sibling('p')
+                if next_p:
+                    value = next_p.get_text(strip=True)
                     
+                    if 'hallticket' in label_text or 'roll' in label_text or 'student id' in label_text:
+                        info['hallTicket'] = value
+                    elif 'student name' in label_text or (label_text == 'name'):
+                        info['name'] = value
+                    elif 'program' in label_text or 'course' in label_text or 'branch' in label_text:
+                        info['program'] = value
+            
+            # Fallback: Try old pattern with text search
+            if not info.get('hallTicket'):
+                hall_ticket_elem = soup.find(string=re.compile(r'Hall Ticket|Roll No|Student ID', re.I))
+                if hall_ticket_elem:
+                    parent = hall_ticket_elem.find_parent()
+                    if parent:
+                        next_elem = parent.find_next_sibling()
+                        if next_elem:
+                            info['hallTicket'] = next_elem.get_text(strip=True)
+                            
         except Exception as e:
             print(f"Error extracting student info: {str(e)}")
         
@@ -88,7 +92,6 @@ class ResultsParser:
         subjects = []
         
         # Try to find results table
-        # This is a placeholder - needs actual HTML structure
         tables = soup.find_all('table')
         
         for table in tables:
@@ -96,36 +99,51 @@ class ResultsParser:
             
             # Try to identify header row
             headers = []
+            header_indices = {}  # Map of field type to column index
+            
             for row in rows:
                 cells = row.find_all(['th', 'td'])
                 cell_texts = [cell.get_text(strip=True) for cell in cells]
                 
                 # Check if this looks like a header row
-                if any(keyword in ' '.join(cell_texts).lower() 
-                       for keyword in ['subject', 'code', 'grade', 'marks', 'credits']):
+                header_text_lower = ' '.join(cell_texts).lower()
+                if any(keyword in header_text_lower 
+                       for keyword in ['subject', 'course', 'code', 'grade', 'marks', 'credits']):
                     headers = cell_texts
+                    
+                    # Build header index map
+                    for i, h in enumerate(headers):
+                        h_lower = h.lower()
+                        if 'code' in h_lower:
+                            header_indices['code'] = i
+                        elif 'name' in h_lower or ('course' in h_lower and 'code' not in h_lower) or ('subject' in h_lower and 'code' not in h_lower):
+                            header_indices['name'] = i
+                        elif 'grade' in h_lower:
+                            header_indices['grade'] = i
+                        elif 'credit' in h_lower:
+                            header_indices['credits'] = i
+                        elif 'mark' in h_lower or 'score' in h_lower:
+                            header_indices['marks'] = i
                     continue
                 
                 # If we have headers, try to parse data rows
                 if headers and len(cells) > 0:
                     subject_data = {}
-                    for i, cell in enumerate(cells):
-                        if i < len(headers):
-                            header = headers[i].lower()
-                            value = cell.get_text(strip=True)
-                            
-                            if 'subject' in header and 'code' not in header:
-                                subject_data['name'] = value
-                            elif 'code' in header:
-                                subject_data['code'] = value
-                            elif 'grade' in header:
-                                subject_data['grade'] = value
-                            elif 'credit' in header:
-                                subject_data['credits'] = value
-                            elif 'mark' in header or 'score' in header:
-                                subject_data['marks'] = value
                     
-                    if subject_data:
+                    # Use header indices for reliable extraction
+                    if 'code' in header_indices and header_indices['code'] < len(cells):
+                        subject_data['code'] = cells[header_indices['code']].get_text(strip=True)
+                    if 'name' in header_indices and header_indices['name'] < len(cells):
+                        subject_data['name'] = cells[header_indices['name']].get_text(strip=True)
+                    if 'grade' in header_indices and header_indices['grade'] < len(cells):
+                        subject_data['grade'] = cells[header_indices['grade']].get_text(strip=True)
+                    if 'credits' in header_indices and header_indices['credits'] < len(cells):
+                        subject_data['credits'] = cells[header_indices['credits']].get_text(strip=True)
+                    if 'marks' in header_indices and header_indices['marks'] < len(cells):
+                        subject_data['marks'] = cells[header_indices['marks']].get_text(strip=True)
+                    
+                    # Only add if we have at least code or name
+                    if subject_data.get('code') or subject_data.get('name'):
                         subjects.append(subject_data)
         
         return subjects

@@ -58,7 +58,10 @@
                         Hall Ticket Number
                     </label>
                     <input type="text" id="hallTicket" name="hallTicket" placeholder="Enter your hall ticket number"
-                        required>
+                        required minlength="6" maxlength="20" pattern="[A-Za-z0-9]+" autocomplete="off"
+                        aria-describedby="hallTicketHint" spellcheck="false">
+                    <span id="hallTicketHint" class="input-hint">Only letters and numbers allowed (6-20
+                        characters)</span>
                 </div>
 
                 <!-- Exam Type Select -->
