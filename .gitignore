@@ -40,3 +40,14 @@ backend/test_scraper.py
 
 # Generated files from tests
 generated/
+
+# Mobile Build Artifacts
+mobile/.buildozer/
+mobile/bin/
+mobile/venv*/
+*.apk
+*.aab
+
+# Release artifacts
+release/
+
