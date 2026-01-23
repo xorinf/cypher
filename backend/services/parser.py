@@ -7,6 +7,7 @@ from bs4 import BeautifulSoup
 import re
 import sys
 import os
+import json
 
 # Path hack for sibling imports if run directly
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -55,6 +56,80 @@ class ResultsParser:
             
         except Exception as e:
             logger.error(f"Error parsing results: {str(e)}")
+            return None
+
+    def parse_api_response(self, api_data):
+        """
+        Parse JSON response from CampX API
+        """
+        if not api_data:
+            logger.warning("Received empty API data")
+            return None
+            
+        try:
+            # 1. Student Info
+            student = api_data.get('student', {})
+            program = api_data.get('program', {})
+            student_info = {
+                'hallTicket': student.get('rollNo'),
+                'name': student.get('fullName'),
+                'program': program.get('branchDisplay') or program.get('branchName')
+            }
+            
+            # 2. Subjects (Flatten all semesters)
+            subjects = []
+            results = api_data.get('results', [])
+            
+            for sem in results:
+                # sem_no = sem.get('semNo')
+                for sub_res in sem.get('subjectsResults', []):
+                    sub = sub_res.get('subject', {})
+                    grade_info = sub_res.get('consideredGrade', {})
+                    
+                    code = sub.get('subjectCode')
+                    if not code: continue
+                    
+                    # Determine Internal/External marks if available or just use total?
+                    # The HTML parser extracted 'marks' column if present. 
+                    # The API has 'intMax', 'extMax' but maybe not actual marks in 'consideredGrade' except grade points?
+                    # consideredGrade has: "grade": "F", "gradePoints": 0, "credits": "0.00"
+                    
+                    subjects.append({
+                        'code': code,
+                        'name': sub.get('name'),
+                        'credits': grade_info.get('credits'),
+                        'grade': grade_info.get('grade'),
+                        'marks': '' # API might not expose raw marks in this endpoint, only grade
+                    })
+            
+            # 3. Semester/Overall Info
+            # API summary has 'creditsObtained', 'marksObtained'.
+            # We need GPA. The API has 'cgpa' in 'student' (null in example) and 'sgpa' per sem.
+            # We can calculate CGPA if it's missing or use what's available.
+            # HTML parser extracted GPA from text.
+            
+            cgpa = api_data.get('cgpa')
+            if cgpa is None:
+                # Try to find overall GPA or just leave blank
+                pass
+                
+            semester_info = {
+                'gpa': cgpa if cgpa else 0.0, # Placeholder
+                'semester': None 
+            }
+            
+            # If we have results, maybe we can calculate GPA? 
+            # Or just use the summary data.
+            # For now, let's keep it simple.
+            
+            return {
+                'studentInfo': student_info,
+                'subjects': subjects,
+                'semesterInfo': semester_info
+            }
+            
+        except Exception as e:
+            logger.error(f"Error parsing API data: {str(e)}")
             return None
     
     def _extract_student_info(self, soup):
