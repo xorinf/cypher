@@ -7,14 +7,14 @@ This directory contains the comprehensive test suite for the Cypher application.
 ```
 tests/
 ├── __init__.py
-├── test_units.py          # Unit tests for Parser, Analytics, and API structures
-├── test_scraper.py        # Scraper service tests (Mock & Real modes)
-├── test_real_results.py   # Full integration test with HTML reporting
-├── fixtures/              # Mock data for testing without network
-│   ├── mock_results.html
-│   ├── mock_results_failed.html
-│   └── mock_results.json
-└── README.md              # This file
+├── unit/              # Unit tests for individual components
+│   ├── test_validators.py
+│   └── test_scraper.py
+├── integration/       # End-to-end integration tests
+│   └── test_real_results.py
+├── benchmarks/        # Performance comparison tests
+│   └── benchmark_scrapers.py (Removed/Legacy)
+└── README.md          # This file
 ```
 
 ## 🚀 Running Tests
@@ -22,22 +22,16 @@ tests/
 All tests should be run from the **project root directory**.
 
 ### 1. Unit Tests (Fast & Safe)
-Runs all logic tests for parsing and analytics using mock data.
+Runs all logic tests for validators and scraper configuration.
 ```bash
-python -m pytest tests/test_units.py -v
+python -m pytest tests/unit/ -v
 ```
 
-### 2. Scraper Tests (Interactive)
-Tests the scraping service specifically. Can use Mock Data (fast) or Real Data (requires config).
-```bash
-python tests/test_scraper.py
-```
-
-### 3. Full Integration Test (Real World)
-Connects to the university portal, fetches results, and generates an HTML report.
+### 2. Integration Test (Real World)
+Connects to the university portal, fetches results using the API, and generates an HTML report.
 **Requires `.env` configuration.**
 ```bash
-python tests/test_real_results.py
+python tests/integration/test_real_results.py
 ```
 
 **Output:**
@@ -46,27 +40,21 @@ python tests/test_real_results.py
 
 ## ⚙️ Configuration
 
-To run integration tests (`test_real_results.py` or `test_scraper.py` mode 2), you must configure the `.env` file in the project root:
+To run integration tests, you must configure the `.env` file in the project root:
 
 ```env
-# URL of the results portal
+# URL of the results portal (for Referer header)
 CAMPX_BASE_URL=https://your-university-portal.edu/results
+
+# API URL
+CAMPX_API_URL=https://api.your-university-middleware.com/student-results/external
 
 # Valid Hall Ticket Number for testing
 EX_HTN=YOUR_HALLTICKET_NUMBER
 ```
 
-## 🧪 Mock Data
-
-The `fixtures/` directory contains sanitized HTML files that simulate various result scenarios:
-- **Standard Pass**: `mock_results.html`
-- **With Failures**: `mock_results_failed.html`
-- **Outstanding**: `mock_results_outstanding.html`
-
-These are used by `test_units.py` to ensure the parser handles different grade types and pass/fail logic correctly without hitting the real server.
-
 ## 📝 Best Practices
 
-- Always run `test_units.py` before pushing changes.
+- Always run unit tests before pushing changes.
 - Do not commit real student data (Hall Tickets) to the repository.
 - Use `EX_HTN` in `.env` for local testing.

@@ -30,7 +30,7 @@ fi
 
 # Check directory structure
 echo "✓ Checking directory structure..."
-for dir in "backend/core" "backend/services" "backend/utils" "tests/unit" "tests/integration" "tests/benchmarks" "docs" "scripts"; do
+for dir in "backend/core" "backend/services" "backend/utils" "tests/unit" "tests/integration" "docs" "scripts"; do
     if [ -d "$dir" ]; then
         echo "  ✓ $dir"
     else

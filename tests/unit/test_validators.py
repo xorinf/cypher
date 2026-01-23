@@ -39,7 +39,7 @@ class TestValidateHallTicket:
     
     def test_invalid_characters(self):
         """Test validation with invalid characters"""
-        is_valid, error = validate_hall_ticket("22EG-107B45")
+        is_valid, error = validate_hall_ticket("23EG-105A32")
         assert is_valid is False
         assert "letters and numbers" in error
 

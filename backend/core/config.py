@@ -26,9 +26,6 @@ class Config:
     # Export Settings
     EXPORT_DIR = os.getenv('EXPORT_DIR', './exports')
     
-    # Webdriver Settings
-    HEADLESS_MODE = True
-    
     @classmethod
     def validate(cls):
         """Validate critical configuration"""

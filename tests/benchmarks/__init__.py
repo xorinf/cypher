@@ -1,3 +1,0 @@
-"""
-Benchmark tests package
-"""
