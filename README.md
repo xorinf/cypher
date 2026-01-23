@@ -6,7 +6,7 @@
 
 ## Overview
 
-Cypher is a university results scraping and analysis system with dual scraping methods (API + Selenium fallback), advanced analytics, and export capabilities.
+Cypher is a high-performance university results scraping and analysis system using direct API integration for maximum speed and efficiency.
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python)
 ![Flask](https://img.shields.io/badge/Flask-3.0-black?style=for-the-badge&logo=flask)
@@ -14,9 +14,9 @@ Cypher is a university results scraping and analysis system with dual scraping m
 ## ✨ Features
 
 ### Core Functionality
-- 🚀 **Dual Scraping Methods**
-  - Direct API scraping (63x faster, primary)
-  - Selenium browser automation (fallback)
+- 🚀 **High-Performance API Scraping**
+  - Direct API integration (63x faster than browser automation)
+  - Lightweight and resource-efficient
 - 📊 **Advanced Analytics**
   - GPA calculation and performance analysis
   - Grade distribution and trends
@@ -33,7 +33,6 @@ Cypher is a university results scraping and analysis system with dual scraping m
 
 ### Prerequisites
 - Python 3.8+
-- Google Chrome browser
 - pip package manager
 
 ### Installation
@@ -101,7 +100,6 @@ cypher/
 │   ├── core/            # Config & logging
 │   ├── services/        # Business logic
 │   │   ├── scraper.py       # API scraper
-│   │   ├── legacy_scraper.py # Selenium fallback
 │   │   ├── parser.py        # Data parsing
 │   │   ├── analytics.py     # Analytics engine
 │   │   └── exporter.py      # Export services
@@ -110,7 +108,6 @@ cypher/
 ├── tests/               # Test suite
 │   ├── unit/           # Unit tests
 │   ├── integration/    # Integration tests
-│   └── benchmarks/     # Performance tests
 │
 ├── docs/               # Documentation
 │   ├── API.md          # API reference
@@ -133,9 +130,6 @@ python -m pytest tests/unit/ -v
 # Integration tests
 python tests/integration/test_real_results.py
 
-# Performance benchmarks
-python tests/benchmarks/benchmark_scrapers.py
-
 # Full verification
 ./scripts/verify.sh
 ```
@@ -145,15 +139,14 @@ python tests/benchmarks/benchmark_scrapers.py
 | Method | Time | Speedup |
 |--------|------|---------|
 | API Scraper | 0.15s | 63x faster |
-| Legacy Selenium | 9.66s | Baseline |
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Python 3.8+, Flask 3.0
-- **Scraping**: Selenium 4.16, Requests
-- **Parsing**: BeautifulSoup 4.12, lxml
-- **Data**: Pandas 2.2+, OpenPyXL 3.1
-- **Testing**: pytest
+ - **Backend**: Python 3.8+, Flask 3.0
+ - **Scraping**: Requests (Direct API)
+ - **Parsing**: Standard JSON
+ - **Data**: Pandas 2.2+, OpenPyXL 3.1
+ - **Testing**: pytest
 
 ## 📚 Documentation
 

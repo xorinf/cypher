@@ -1,7 +1,7 @@
 # Cypher Architecture
 
 ## Overview
-Cypher is a university results scraping and analysis system built with Flask backend and modern frontend.
+Cypher is a high-performance university results scraping and analysis system built with Flask backend and modern frontend. It exclusively uses direct API integration for speed and reliability.
 
 ## System Architecture
 
@@ -23,13 +23,11 @@ Cypher is a university results scraping and analysis system built with Flask bac
          │
          ├──► Business Services
          │    ├── Scraper (API)
-         │    ├── Legacy Scraper (Selenium)
-         │    ├── Parser (HTML/JSON)
+         │    ├── Parser (JSON)
          │    ├── Analytics Engine
          │    └── Exporter (CSV/Excel)
          │
          └──► External APIs
-              ├── University Portal (Web)
               └── University API (REST)
 ```
 
@@ -41,9 +39,8 @@ Cypher is a university results scraping and analysis system built with Flask bac
   - `config.py`: Environment-based configuration
   - `logger.py`: Centralized logging
 - **services/**: Business logic layer
-  - `scraper.py`: Direct API scraper (primary)
-  - `legacy_scraper.py`: Selenium browser automation (fallback)
-  - `parser.py`: HTML/JSON parsing logic
+  - `scraper.py`: Direct API scraper
+  - `parser.py`: JSON parsing logic
   - `analytics.py`: GPA calculation, performance analysis
   - `exporter.py`: CSV/Excel export functionality
 - **utils/**: Helper utilities
@@ -52,7 +49,6 @@ Cypher is a university results scraping and analysis system built with Flask bac
 ### Tests (`tests/`)
 - **unit/**: Unit tests for individual components
 - **integration/**: End-to-end integration tests
-- **benchmarks/**: Performance comparison tests
 - **fixtures/**: Test data and mocks
 
 ### Frontend (`frontend/`)
@@ -64,7 +60,7 @@ Cypher is a university results scraping and analysis system built with Flask bac
 
 ## Data Flow
 
-### Primary Flow (API Method)
+### Primary Flow
 ```
 User Request
     ↓
@@ -81,29 +77,12 @@ AnalyticsEngine.calculate_analytics()
 JSON Response → User
 ```
 
-### Fallback Flow (Selenium Method)
-```
-User Request
-    ↓
-API Endpoint
-    ↓
-LegacyCampXScraper (Browser Automation)
-    ↓
-Web Portal (HTML Response)
-    ↓
-ResultsParser.parse_results()
-    ↓
-AnalyticsEngine
-    ↓
-JSON Response → User
-```
-
 ## Key Design Decisions
 
-### 1. Dual Scraping Strategy
-- **Primary**: Direct API calls (63x faster)
-- **Fallback**: Selenium automation (for UI-only portals)
-- Both methods maintained for reliability
+### 1. API-First Strategy
+- **Efficiency**: Direct API calls are ~63x faster than browser automation
+- **Reliability**: Structured JSON data reduces parsing errors
+- **Performance**: High throughput with minimal resource usage
 
 ### 2. Environment-Based Configuration
 All sensitive data in `.env`:
@@ -115,11 +94,6 @@ All sensitive data in `.env`:
 - Each service handles one responsibility
 - Easy to test, modify, replace
 - Clear interfaces between components
-
-### 4. Parser Flexibility
-- Handles both HTML (from Selenium) and JSON (from API)
-- Unified output format for consistency
-- Easy to add new parsing methods
 
 ## Security Considerations
 
@@ -133,8 +107,7 @@ All sensitive data in `.env`:
 | Component | Performance | Notes |
 |-----------|-------------|-------|
 | API Scraper | ~0.15s | Direct HTTP, no browser overhead |
-| Selenium Scraper | ~9.66s | Full browser automation |
-| Parser | <0.01s | Fast HTML/JSON parsing |
+| Parser | <0.01s | Optimized JSON parsing |
 | Analytics | <0.01s | In-memory calculations |
 | Export | 0.1-0.5s | Depends on data size |
 
@@ -155,20 +128,11 @@ All sensitive data in `.env`:
 
 1. **Network Errors**: Retry with exponential backoff
 2. **Parsing Errors**: Log and return partial data if possible
-3. **API Errors**: Fall back to Selenium method
+3. **API Errors**: Return standardized error messages
 4. **Validation Errors**: Clear user-facing messages
 
 ## Testing Strategy
 
 - **Unit Tests**: Test each service in isolation
 - **Integration Tests**: Test full API-to-database flow
-- **Benchmarks**: Compare performance of different approaches
 - **Fixtures**: Reusable test data for consistency
-
-## Future Enhancements
-
-1. User authentication and authorization
-2. Result caching and history
-3. Batch processing for multiple students
-4. Real-time notifications
-5. Mobile app integration
