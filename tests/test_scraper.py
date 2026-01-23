@@ -13,8 +13,8 @@ import os
 # Add parent directory to path to import backend modules
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 
-from scraper import CampXScraper
-from parser import ResultsParser
+from services.scraper import CampXScraper
+from services.parser import ResultsParser
 import json
 
 def test_scraper_with_real_data():

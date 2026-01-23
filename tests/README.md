@@ -1,81 +1,72 @@
 # Tests Directory
 
-This directory contains all test files and fixtures for the Cypher application.
+This directory contains the comprehensive test suite for the Cypher application.
 
-## Structure
+## 📁 Structure
 
 ```
 tests/
 ├── __init__.py
-├── test_scraper.py       # Scraper unit tests
-├── fixtures/
-│   ├── __init__.py
-│   ├── mock_results.html # Mock HTML results page
-│   └── mock_results.json # Mock parsed JSON data
-└── README.md            # This file
+├── test_units.py          # Unit tests for Parser, Analytics, and API structures
+├── test_scraper.py        # Scraper service tests (Mock & Real modes)
+├── test_real_results.py   # Full integration test with HTML reporting
+├── fixtures/              # Mock data for testing without network
+│   ├── mock_results.html
+│   ├── mock_results_failed.html
+│   └── mock_results.json
+└── README.md              # This file
 ```
 
-## Running Tests
+## 🚀 Running Tests
 
-### Prerequisites
-- Ensure the virtual environment is activated
-- Install test dependencies: `pip install pytest` (optional, for advanced testing)
+All tests should be run from the **project root directory**.
 
-### Run Scraper Tests
-
+### 1. Unit Tests (Fast & Safe)
+Runs all logic tests for parsing and analytics using mock data.
 ```bash
-# From project root
-source venv/bin/activate
-cd backend
-python ../tests/test_scraper.py
+python -m pytest tests/test_units.py -v
 ```
 
-### Environment Setup
-
-Before running tests, create a `.env` file from `.env.example`:
-
+### 2. Scraper Tests (Interactive)
+Tests the scraping service specifically. Can use Mock Data (fast) or Real Data (requires config).
 ```bash
-cp .env.example .env
+python tests/test_scraper.py
 ```
 
-Then edit `.env` and set:
-- `CAMPX_BASE_URL` to your university's results portal URL
-- Other configuration as needed
+### 3. Full Integration Test (Real World)
+Connects to the university portal, fetches results, and generates an HTML report.
+**Requires `.env` configuration.**
+```bash
+python tests/test_real_results.py
+```
 
-> **Note**: You'll need a valid hallticket number to test the scraper with real data.
+**Output:**
+- `generated/results_report.html` - Visual report of the results.
+- `generated/real_results.json` - Raw parsed data.
 
-## Mock Data
+## ⚙️ Configuration
 
-The `fixtures/` directory contains sanitized mock data for testing without accessing real university systems:
+To run integration tests (`test_real_results.py` or `test_scraper.py` mode 2), you must configure the `.env` file in the project root:
 
-- **mock_results.html**: Sample HTML result page with fictional student data
-- **mock_results.json**: Sample parsed JSON output
+```env
+# URL of the results portal
+CAMPX_BASE_URL=https://your-university-portal.edu/results
 
-These fixtures can be used to test the parser logic without running the full scraper.
+# Valid Hall Ticket Number for testing
+EX_HTN=YOUR_HALLTICKET_NUMBER
+```
 
-## Creating Your Own Test Data
+## 🧪 Mock Data
 
-1. **For Testing Parser Only**:
-   - Modify `mock_results.html` with different grades/subjects
-   - Run parser tests to verify it handles various formats
+The `fixtures/` directory contains sanitized HTML files that simulate various result scenarios:
+- **Standard Pass**: `mock_results.html`
+- **With Failures**: `mock_results_failed.html`
+- **Outstanding**: `mock_results_outstanding.html`
 
-2. **For Testing Full Scraper**:
-   - Update `.env` with your university's URL
-   - Use your own hallticket in `test_scraper.py`
-   - Run the scraper test
+These are used by `test_units.py` to ensure the parser handles different grade types and pass/fail logic correctly without hitting the real server.
 
-## Security Note
+## 📝 Best Practices
 
-⚠️ **Never commit real student data or personal information to this repository!**
-
-- Use mock data for testing
-- Keep your `.env` file private (already in `.gitignore`)
-- Replace any real data with placeholders before committing
-
-## Test Output Files
-
-Test runs may generate output files like:
-- `test_output.html`
-- `test_output.json`
-
-These are automatically ignored by `.gitignore` and should not be committed.
+- Always run `test_units.py` before pushing changes.
+- Do not commit real student data (Hall Tickets) to the repository.
+- Use `EX_HTN` in `.env` for local testing.

@@ -17,9 +17,9 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
 
-from scraper import CampXScraper
-from parser import ResultsParser
-from analytics import AnalyticsEngine
+from services.scraper import CampXScraper
+from services.parser import ResultsParser
+from services.analytics import AnalyticsEngine
 
 
 def generate_html_report(full_response, output_path):

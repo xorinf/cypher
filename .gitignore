@@ -51,3 +51,6 @@ mobile/venv*/
 # Release artifacts
 release/
 
+
+# Local backup
+legacy/

@@ -1,46 +1,60 @@
 """
-Results Exporter
+Results Exporter Service
 Generates CSV and Excel files from results data
 """
 
 import os
 import csv
 import pandas as pd
+import sys
 from datetime import datetime
 
+# Path hack
+current_dir = os.path.dirname(os.path.abspath(__file__))
+backend_dir = os.path.dirname(current_dir)
+if backend_dir not in sys.path:
+    sys.path.insert(0, backend_dir)
+
+from core.config import Config
+from core.logger import setup_logger
+
+logger = setup_logger(__name__)
 
 class ResultsExporter:
     """Exports results data to CSV or Excel format"""
     
     def __init__(self):
-        self.export_dir = os.getenv('EXPORT_DIR', './exports')
+        self.export_dir = Config.EXPORT_DIR
         self._ensure_export_dir()
     
     def _ensure_export_dir(self):
         """Create export directory if it doesn't exist"""
         if not os.path.exists(self.export_dir):
-            os.makedirs(self.export_dir)
+            try:
+                os.makedirs(self.export_dir)
+                logger.info(f"Created export directory: {self.export_dir}")
+            except Exception as e:
+                logger.error(f"Failed to create export directory: {str(e)}")
     
     def export(self, results_data: dict, format: str = 'csv') -> str:
-        """
-        Export results to specified format
-        
-        Args:
-            results_data: Dictionary containing results and analytics
-            format: 'csv' or 'excel'
+        """Export results to specified format"""
+        try:
+            timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+            hall_ticket = results_data.get('studentInfo', {}).get('hallTicket', 'unknown')
             
-        Returns:
-            str: Path to the generated file
-        """
-        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-        hall_ticket = results_data.get('studentInfo', {}).get('hallTicket', 'unknown')
-        
-        if format.lower() == 'excel':
-            filename = f"results_{hall_ticket}_{timestamp}.xlsx"
-            return self._export_excel(results_data, filename)
-        else:
-            filename = f"results_{hall_ticket}_{timestamp}.csv"
-            return self._export_csv(results_data, filename)
+            if format.lower() == 'excel':
+                filename = f"results_{hall_ticket}_{timestamp}.xlsx"
+                filepath = self._export_excel(results_data, filename)
+            else:
+                filename = f"results_{hall_ticket}_{timestamp}.csv"
+                filepath = self._export_csv(results_data, filename)
+                
+            logger.info(f"Exported results to {filepath}")
+            return filepath
+            
+        except Exception as e:
+            logger.error(f"Export failed: {str(e)}")
+            return None
     
     def _export_csv(self, results_data: dict, filename: str) -> str:
         """Export to CSV format"""
