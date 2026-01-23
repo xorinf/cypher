@@ -11,6 +11,9 @@ Cypher is a web application that automates university examination result retriev
 ![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python)
 ![Flask](https://img.shields.io/badge/Flask-3.0-black?style=for-the-badge&logo=flask)
 ![Status](https://img.shields.io/badge/Status-v1.1-success?style=for-the-badge)
+![Tests](https://github.com/xorinf/cypher/workflows/Tests/badge.svg)
+![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
+
 
 ---
 
