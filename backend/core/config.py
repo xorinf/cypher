@@ -12,6 +12,9 @@ class Config:
     
     # CampX Portal Settings
     CAMPX_BASE_URL = os.getenv('CAMPX_BASE_URL')
+    CAMPX_API_URL = os.getenv('CAMPX_API_URL')
+    CAMPX_INSTITUTION_CODE = os.getenv('CAMPX_INSTITUTION_CODE')
+    CAMPX_TENANT_ID = os.getenv('CAMPX_TENANT_ID')
     
     # Test Settings
     EX_HTN = os.getenv('EX_HTN')
@@ -32,6 +35,15 @@ class Config:
         missing = []
         if not cls.CAMPX_BASE_URL:
             missing.append("CAMPX_BASE_URL")
+        if not cls.CAMPX_API_URL:
+            missing.append("CAMPX_API_URL")
+        
+        # Warn but don't fail for headers as they might be optional or have defaults?
+        # Better to enforce if we are removing hardcoded defaults.
+        if not cls.CAMPX_INSTITUTION_CODE:
+             missing.append("CAMPX_INSTITUTION_CODE")
+        if not cls.CAMPX_TENANT_ID:
+             missing.append("CAMPX_TENANT_ID")
             
         if missing:
             raise ValueError(f"Missing configuration variables: {', '.join(missing)}")

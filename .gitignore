@@ -7,6 +7,7 @@ venv/
 env/
 *.so
 .Python
+.pytest_cache/
 
 # Environment
 .env
@@ -25,6 +26,7 @@ exports/
 # OS
 .DS_Store
 Thumbs.db
+*.md~
 
 # Selenium
 chromedriver

@@ -2,61 +2,85 @@
 
 > **⚠️ Educational Project Disclaimer**
 > 
-> This is a personal learning project created for educational purposes. It demonstrates web scraping, data parsing, and analytics techniques. This project is not officially affiliated with any university or portal system. Use responsibly and only with proper authorization for your own academic data.
+> This is a personal learning project created for educational purposes only. Use responsibly and only with proper authorization for your own academic data.
 
 ## Overview
 
-Cypher is a web application that automates university examination result retrieval and analysis. It scrapes result data from portals, parses student information and grades, and generates performance analytics.
+Cypher is a university results scraping and analysis system with dual scraping methods (API + Selenium fallback), advanced analytics, and export capabilities.
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python)
 ![Flask](https://img.shields.io/badge/Flask-3.0-black?style=for-the-badge&logo=flask)
-![Status](https://img.shields.io/badge/Status-v1.1-success?style=for-the-badge)
 
----
+## ✨ Features
 
-## 🚀 Quick Start (5 Minutes)
+### Core Functionality
+- 🚀 **Dual Scraping Methods**
+  - Direct API scraping (63x faster, primary)
+  - Selenium browser automation (fallback)
+- 📊 **Advanced Analytics**
+  - GPA calculation and performance analysis
+  - Grade distribution and trends
+  - Pass/Fail status tracking
+- 📁 **Export Capabilities**
+  - CSV and Excel formats
+  - HTML report generation
+- 🔒 **Security First**
+  - Input validation and sanitization
+  - Environment-based configuration
+  - No hardcoded credentials
+
+## 🚀 Quick Start
 
 ### Prerequisites
 - Python 3.8+
 - Google Chrome browser
 - pip package manager
 
-### Step 1: Clone & Setup
+### Installation
 
 ```bash
-# Clone the repository
-git clone https://github.com/xorinf/cypher.git
+# Clone repository
+git clone https://github.com/yourusername/cypher.git
 cd cypher
 
+# Run automated setup
+./setup.sh
+```
+
+### Manual Setup
+
+```bash
 # Create virtual environment
 python3 -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+source venv/bin/activate
 
 # Install dependencies
 pip install -r backend/requirements.txt
-```
 
-### Step 2: Configure
-
-```bash
-# Copy example config
+# Configure environment
 cp .env.example .env
+# Edit .env with your configuration
 ```
 
-Edit `.env` with your details:
+### Configuration (.env)
+
 ```env
-# University Portal URL
-CAMPX_BASE_URL=https://your-university-portal.edu/results
+# Portal URLs
+CAMPX_BASE_URL=https://your-portal.edu/results
+CAMPX_API_URL=https://api.your-portal.edu/student-results
 
-# Testing Hall Ticket (Required for Integration Tests)
-EX_HTN=YOUR_HALLTICKET_NUMBER
+# Authentication Headers
+CAMPX_INSTITUTION_CODE=your_code
+CAMPX_TENANT_ID=your_tenant
+
+# Testing
+EX_HTN=YOUR_HALL_TICKET
 ```
 
-### Step 3: Run
+### Running
 
 **Backend API:**
 ```bash
-# From project root
 source venv/bin/activate
 python backend/app.py
 ```
@@ -66,111 +90,90 @@ python backend/app.py
 cd frontend && python3 -m http.server 8080
 ```
 
-**Open:** http://localhost:8080
+Access at: http://localhost:8080
 
----
-
-## 🧪 Testing
-
-The project includes a comprehensive test suite.
-
-```bash
-# Activate virtual environment
-source venv/bin/activate
-
-# 1. Run Unit Tests (Parser, Analytics, API logic)
-python -m pytest tests/test_units.py -v
-
-# 2. Run Scraper Integration Test (Uses Mock Data)
-python tests/test_scraper.py
-# (Select Option 1 for Mock Data)
-
-# 3. Run Real Results Integration Test (Requires .env configuration)
-python tests/test_real_results.py
-```
-
-**Test Reports:**
-Integration tests generate reports in the `generated/` directory:
-- `generated/results_report.html` (Visual Report)
-- `generated/real_results.json` (Parsed Data)
-
----
-
-## 🎯 Features
-
-- **📊 Automated Scraping** - Robust Selenium-based scraping with `webdriver-manager`
-- **📈 Advanced Analytics** - GPA calculation, credit summary, and performance classification
-- **📑 Export Options** - Download results as CSV or Excel
-- **🎨 Modern UI** - Dark theme with responsive design
-- **🔒 Secure** - Environment-based configuration and clean architecture
-
----
-
-## 📁 Project Structure (Refactored)
+## 📁 Project Structure
 
 ```
 cypher/
-├── backend/                   # Backend Application
-│   ├── app.py                 # Flask App Entry Point
-│   ├── core/                  # Core Systems
-│   │   ├── config.py          # Configuration Management
-│   │   └── logger.py          # Structured Logging
-│   ├── services/              # Business Logic Services
-│   │   ├── scraper.py         # Selenium Scraper
-│   │   ├── parser.py          # HTML Parser (BS4)
-│   │   ├── analytics.py       # GPA Logic
-│   │   └── exporter.py        # File Exporter
-│   └── requirements.txt       # Dependencies
+├── backend/              # Flask API server
+│   ├── app.py           # Entry point
+│   ├── core/            # Config & logging
+│   ├── services/        # Business logic
+│   │   ├── scraper.py       # API scraper
+│   │   ├── legacy_scraper.py # Selenium fallback
+│   │   ├── parser.py        # Data parsing
+│   │   ├── analytics.py     # Analytics engine
+│   │   └── exporter.py      # Export services
+│   └── utils/           # Validators
 │
-├── frontend/                  # Web UI
-│   ├── index.html
-│   ├── styles.css
-│   └── app.js
+├── tests/               # Test suite
+│   ├── unit/           # Unit tests
+│   ├── integration/    # Integration tests
+│   └── benchmarks/     # Performance tests
 │
-├── tests/                     # Test Suite
-│   ├── fixtures/              # Mock Data
-│   ├── test_units.py          # Unit Tests
-│   ├── test_scraper.py        # Scraper Tests
-│   └── test_real_results.py   # Full Integration Test
+├── docs/               # Documentation
+│   ├── API.md          # API reference
+│   └── ARCHITECTURE.md # System design
 │
-├── generated/                 # Test Outputs (gitignored)
-├── legacy/                    # Archived Codebase
-├── .env.example               # Config Template
-└── README.md                  # This file
+├── frontend/           # Web interface
+├── scripts/            # Utility scripts
+└── generated/          # Auto-generated files
 ```
 
----
+## 🧪 Testing
+
+```bash
+# Activate environment
+source venv/bin/activate
+
+# Unit tests
+python -m pytest tests/unit/ -v
+
+# Integration tests
+python tests/integration/test_real_results.py
+
+# Performance benchmarks
+python tests/benchmarks/benchmark_scrapers.py
+
+# Full verification
+./scripts/verify.sh
+```
+
+## 📊 Performance
+
+| Method | Time | Speedup |
+|--------|------|---------|
+| API Scraper | 0.15s | 63x faster |
+| Legacy Selenium | 9.66s | Baseline |
 
 ## 🛠️ Tech Stack
 
-| Component | Technology |
-|-----------|-----------|
-| Backend | Python 3.8+, Flask 3.0 |
-| Automation | Selenium 4.16, WebDriver Manager |
-| Parsing | BeautifulSoup 4.12, lxml |
-| Data | Pandas 2.1, OpenPyXL 3.1 |
-| Architecture | Modular Service-Based |
+- **Backend**: Python 3.8+, Flask 3.0
+- **Scraping**: Selenium 4.16, Requests
+- **Parsing**: BeautifulSoup 4.12, lxml
+- **Data**: Pandas 2.2+, OpenPyXL 3.1
+- **Testing**: pytest
 
----
+## 📚 Documentation
+
+- [API Documentation](docs/API.md) - API endpoints and usage
+- [Architecture](docs/ARCHITECTURE.md) - System design and data flow
 
 ## 🔒 Security
 
-- All sensitive URLs and IDs configured via `.env`
-- No hardcoded credentials
-- Structured logging prevents sensitive data leakage
-- `.env` is gitignored
-
----
+- ✅ Input validation and sanitization
+- ✅ Environment-based secrets
+- ✅ No hardcoded credentials
+- ✅ Structured logging (no sensitive data)
 
 ## 🤝 Contributing
 
 1. Fork the repository
 2. Create feature branch (`git checkout -b feature/amazing`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
+3. Commit changes (`git commit -m 'Add feature'`)
 4. Push to branch (`git push origin feature/amazing`)
-5. Open a Pull Request
-
----
+5. Open Pull Request
 
 ## 📝 License
 

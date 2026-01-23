@@ -10,16 +10,19 @@ import json
 from datetime import datetime
 
 # Add parent directory to path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
+current_dir = os.path.dirname(os.path.abspath(__file__))
+project_root = os.path.dirname(os.path.dirname(current_dir))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
 from dotenv import load_dotenv
 
 # Load environment variables
-load_dotenv(os.path.join(os.path.dirname(__file__), '..', '.env'))
+load_dotenv(os.path.join(project_root, '.env'))
 
-from services.scraper import CampXScraper
-from services.parser import ResultsParser
-from services.analytics import AnalyticsEngine
+from backend.services.scraper import CampXScraper
+from backend.services.parser import ResultsParser
+from backend.services.analytics import AnalyticsEngine
 
 
 def generate_html_report(full_response, output_path):
@@ -303,7 +306,7 @@ def test_real_results():
     print("-" * 50)
     
     try:
-        html_content = scraper.fetch_results(
+        api_data = scraper.fetch_results(
             hall_ticket=hall_ticket,
             exam_type='Regular',
             view_type='All Semesters'
@@ -312,25 +315,25 @@ def test_real_results():
         print(f"❌ Scraper error: {str(e)}")
         return False
     
-    if not html_content:
-        print("❌ Failed to fetch results - no HTML content returned")
+    if not api_data:
+        print("❌ Failed to fetch results - no data returned")
         return False
     
-    print(f"✅ Fetched HTML content ({len(html_content)} characters)")
+    print(f"✅ Fetched API data")
     
     # Save to generated folder
     output_dir = os.path.join(os.path.dirname(__file__), '..', 'generated')
     os.makedirs(output_dir, exist_ok=True)
     
-    html_file = os.path.join(output_dir, 'real_results_raw.html')
-    with open(html_file, 'w', encoding='utf-8') as f:
-        f.write(html_content)
+    raw_json_file = os.path.join(output_dir, 'real_results_raw.json')
+    with open(raw_json_file, 'w', encoding='utf-8') as f:
+        json.dump(api_data, f, indent=2)
     
     # Step 2: Parse the results
-    print("\nStep 2: Parsing HTML content...")
+    print("\nStep 2: Parsing API data...")
     print("-" * 50)
     
-    parsed_data = parser.parse_results(html_content)
+    parsed_data = parser.parse_api_response(api_data)
     
     if not parsed_data:
         print("❌ Failed to parse results")

@@ -61,15 +61,33 @@ def create_app():
                 logger.warning("Fetch request missing hall ticket")
                 return jsonify({'error': 'Hall ticket number is required'}), 400
             
+            # Import and use validators
+            from utils.validators import validate_hall_ticket, validate_exam_type, sanitize_input
+            
+            # Sanitize inputs
+            hall_ticket = sanitize_input(hall_ticket, max_length=20)
+            
+            # Validate inputs
+            is_valid, error_msg = validate_hall_ticket(hall_ticket)
+            if not is_valid:
+                logger.warning(f"Invalid hall ticket: {error_msg}")
+                return jsonify({'error': error_msg}), 400
+            
+            if exam_type:
+                is_valid, error_msg = validate_exam_type(exam_type)
+                if not is_valid:
+                    logger.warning(f"Invalid exam type: {error_msg}")
+                    return jsonify({'error': error_msg}), 400
+            
             logger.info(f"Fetching results for {hall_ticket}")
             
             # Scrape
-            html_content = scraper.fetch_results(hall_ticket, exam_type, view_type)
-            if not html_content:
+            api_data = scraper.fetch_results(hall_ticket, exam_type, view_type)
+            if not api_data:
                 return jsonify({'error': 'Failed to retrieve results. Please check hall ticket.'}), 404
             
             # Parse
-            results_data = parser.parse_results(html_content)
+            results_data = parser.parse_api_response(api_data)
             if not results_data:
                 return jsonify({'error': 'Unable to parse results from response.'}), 404
             
