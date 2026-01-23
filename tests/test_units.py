@@ -14,8 +14,8 @@ import pytest
 # Add parent directory to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 
-from parser import ResultsParser
-from analytics import AnalyticsEngine
+from services.parser import ResultsParser
+from services.analytics import AnalyticsEngine
 
 # Get the fixtures directory path
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), 'fixtures')
