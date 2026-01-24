@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: cypher-backend
+    env: python
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: gunicorn --chdir backend app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: CAMPX_BASE_URL
+        sync: false
+      - key: CAMPX_API_URL
+        sync: false
+      - key: CAMPX_INSTITUTION_CODE
+        sync: false
+      - key: CAMPX_TENANT_ID
+        sync: false
