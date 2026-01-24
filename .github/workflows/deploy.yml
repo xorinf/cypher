@@ -27,11 +27,17 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5
 
+      - name: Build Static Site
+        run: |
+          mkdir _site
+          cp index.html app.js styles.css _site/
+          # Create .nojekyll to prevent Jekyll processing
+          touch _site/.nojekyll
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          path: '_site'
 
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
