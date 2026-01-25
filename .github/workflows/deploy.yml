@@ -33,7 +33,7 @@ jobs:
       - name: Build Static Site
         run: |
           mkdir _site
-          cp index.html app.js styles.css _site/
+          cp docs/index.html docs/app.js docs/styles.css _site/
           # Create .nojekyll to prevent Jekyll processing
           touch _site/.nojekyll
 
