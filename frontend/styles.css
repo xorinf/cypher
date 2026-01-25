@@ -57,7 +57,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(
 .brand { display: flex; align-items: center; gap: 0.75rem; }
 .logo-icon svg { width: 32px; height: 32px; }
 .centered .logo-icon svg { width: 48px; height: 48px; }
-.brand h1 { font-size: 1.5rem; font-weight: 800; background: var(--primary-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.brand h1 { font-size: 1.5rem; font-weight: 800; background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
 .centered .brand h1 { font-size: 2.5rem; }
 
 .compact-form {
