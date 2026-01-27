@@ -39,7 +39,7 @@ Cypher is a high-performance university results scraping and analysis system usi
 
 ```bash
 # Clone repository
-git clone https://github.com/yourusername/cypher.git
+git clone https://github.com/xorinf/cypher.git
 cd cypher
 
 # Run automated setup
