@@ -27,7 +27,6 @@ Cypher is a high-performance university results scraping and analysis system usi
 - 🔒 **Security First**
   - Input validation and sanitization
   - Environment-based configuration
-  - No hardcoded credentials
 
 ## 🚀 Quick Start
 
@@ -138,7 +137,7 @@ python tests/integration/test_real_results.py
 
 | Method | Time | Speedup |
 |--------|------|---------|
-| API Scraper | 0.15s | 63x faster |
+| API Scraper | 0.15s | 67x faster |
 
 ## 🛠️ Tech Stack
 

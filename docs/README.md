@@ -27,7 +27,6 @@ Cypher is a high-performance university results scraping and analysis system usi
 - 🔒 **Security First**
   - Input validation and sanitization
   - Environment-based configuration
-  - No hardcoded credentials
 
 ## 🚀 Quick Start
 
@@ -153,12 +152,6 @@ python tests/integration/test_real_results.py
 - [API Documentation](docs/API.md) - API endpoints and usage
 - [Architecture](docs/ARCHITECTURE.md) - System design and data flow
 
-## 🔒 Security
-
-- ✅ Input validation and sanitization
-- ✅ Environment-based secrets
-- ✅ No hardcoded credentials
-- ✅ Structured logging (no sensitive data)
 
 ## 🤝 Contributing
 
