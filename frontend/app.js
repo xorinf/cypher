@@ -12,6 +12,15 @@ const form = document.getElementById('resultsForm');
 const loadingState = document.getElementById('loadingState');
 const errorState = document.getElementById('errorState');
 const dashboard = document.getElementById('resultsDashboard');
+const batchPanel = document.getElementById('batchPanel');
+
+// Show/hide the batch panel when search bar transitions up
+function revealBatchPanel() {
+    if (batchPanel.style.display === 'none') {
+        batchPanel.style.display = 'block';
+        loadFavorites();
+    }
+}
 
 // Event Listener
 form.addEventListener('submit', async (e) => {
@@ -28,6 +37,7 @@ form.addEventListener('submit', async (e) => {
     errorState.style.display = 'none';
     dashboard.style.display = 'none';
     loadingState.style.display = 'block';
+    revealBatchPanel();
 
     try {
         await fetchResults({ hallTicket });
@@ -65,6 +75,7 @@ function renderDashboard(data) {
     const semesters = data.semesterInfo?.semesters || [];
 
     // 1. Hero Profile (Box Full PFP)
+    const isFav = favoritesSet.has((student.hallTicket || '').toUpperCase());
     document.getElementById('heroProfile').innerHTML = `
         <div class="pfp-box">
             <img src="${student.photo || 'https://via.placeholder.com/200'}" onerror="this.src='https://via.placeholder.com/200/333/fff?text=No+Photo'">
@@ -82,6 +93,9 @@ function renderDashboard(data) {
                     <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                     ${student.hallTicket}
                 </div>
+                <button class="fav-star-btn ${isFav ? 'fav-active' : ''}" onclick="toggleFavorite('${student.hallTicket}', '${student.name || ''}')" title="${isFav ? 'Remove from favorites' : 'Save to favorites'}">
+                    ⭐ ${isFav ? 'Saved' : 'Save'}
+                </button>
             </div>
         </div>
     `;
@@ -192,3 +206,234 @@ function renderSemesterSummary(trends) {
         </div>
     `).join('');
 }
+
+// ============================================================
+// Batch Fetch
+// ============================================================
+
+function switchBatchTab(tab, btn) {
+    document.querySelectorAll('.batch-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('batchTab').style.display = tab === 'batch' ? 'block' : 'none';
+    document.getElementById('favoritesTab').style.display = tab === 'favorites' ? 'block' : 'none';
+    if (tab === 'favorites') loadFavorites();
+}
+
+function loadCSVFile(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const lines = e.target.result.split(/[\r\n,]+/).map(l => l.trim()).filter(Boolean);
+        // Skip header-like lines
+        const cleaned = lines.filter(l => !/^(hall.?ticket|roll.?no|roll.?number|id)/i.test(l));
+        document.getElementById('batchInput').value = cleaned.join('\n');
+    };
+    reader.readAsText(file);
+}
+
+async function startBatchFetch() {
+    const raw = document.getElementById('batchInput').value;
+    const rollNumbers = raw.split(/[\r\n,]+/).map(r => r.trim().toUpperCase()).filter(r => r.length >= 5);
+
+    if (rollNumbers.length === 0) {
+        alert('Please enter at least one valid roll number (min 5 characters).');
+        return;
+    }
+    if (rollNumbers.length > 50) {
+        alert('Maximum 50 roll numbers per batch.');
+        return;
+    }
+
+    document.getElementById('batchLoading').style.display = 'flex';
+    document.getElementById('batchProgress').textContent = `Fetching ${rollNumbers.length} result(s)…`;
+    document.getElementById('batchResults').style.display = 'none';
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/batch-fetch`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ rollNumbers })
+        });
+        const data = await response.json();
+        renderBatchResults(data);
+    } catch (err) {
+        alert('Batch fetch failed: ' + err.message);
+    } finally {
+        document.getElementById('batchLoading').style.display = 'none';
+    }
+}
+
+function renderBatchResults(data) {
+    const panel = document.getElementById('batchResults');
+    const tbody = document.getElementById('batchTableBody');
+    const badge = document.getElementById('batchSummaryBadge');
+    const errorsEl = document.getElementById('batchErrors');
+
+    const { results = [], errors = [], topPerformer, summary = {} } = data;
+
+    badge.textContent = `${summary.succeeded} fetched · ${summary.failed} failed`;
+
+    // Sort by CGPA descending
+    const sorted = [...results].sort((a, b) =>
+        (b.analytics?.gpa || 0) - (a.analytics?.gpa || 0)
+    );
+
+    tbody.innerHTML = sorted.map(r => {
+        const s = r.studentInfo || {};
+        const a = r.analytics || {};
+        const isTop = s.hallTicket && s.hallTicket === topPerformer;
+        const isFav = favoritesSet.has((s.hallTicket || '').toUpperCase());
+        return `
+            <tr class="${isTop ? 'batch-row-top' : ''}">
+                <td>
+                    ${isTop ? '<span class="top-badge">🏆 Top</span>' : ''}
+                    ${s.hallTicket || '-'}
+                </td>
+                <td>${s.name || '-'}</td>
+                <td style="color: var(--text-secondary); font-size: 0.9rem;">${s.program || '-'}</td>
+                <td style="font-weight: 700; color: ${getGPAColor(a.gpa)}">${a.gpa || '-'}</td>
+                <td style="color: ${(a.passFailStatus?.failed || 0) > 0 ? '#fb923c' : '#10b981'}">${a.passFailStatus?.failed || 0}</td>
+                <td style="color: ${a.passFailStatus?.overallStatus === 'All Clear' ? '#10b981' : '#fb923c'}">${a.passFailStatus?.overallStatus || '-'}</td>
+                <td class="batch-row-actions">
+                    <button class="action-btn" onclick="viewBatchStudent('${s.hallTicket}', ${sorted.indexOf(r)})" title="View full results">👁</button>
+                    <button class="action-btn fav-toggle-btn ${isFav ? 'fav-active' : ''}" onclick="toggleFavoriteFromBatch('${s.hallTicket}', '${s.name || ''}', this)" title="${isFav ? 'Remove favorite' : 'Save favorite'}">⭐</button>
+                </td>
+            </tr>
+        `;
+    }).join('');
+
+    if (errors.length) {
+        errorsEl.style.display = 'block';
+        errorsEl.innerHTML = `<strong>Failed (${errors.length}):</strong> ` +
+            errors.map(e => `${e.hallTicket}: ${e.error}`).join(' · ');
+    } else {
+        errorsEl.style.display = 'none';
+    }
+
+    // Store batch results for quick view
+    window._batchResults = sorted;
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function viewBatchStudent(hallTicket, index) {
+    const data = window._batchResults?.[index];
+    if (!data) return;
+    currentResults = data;
+    renderDashboard(data);
+    dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// ============================================================
+// Favorites
+// ============================================================
+
+let favoritesSet = new Set(); // cache of saved hall tickets (uppercase)
+
+async function loadFavorites() {
+    try {
+        const res = await fetch(`${API_BASE_URL}/favorites`);
+        const data = await res.json();
+        const favorites = data.favorites || [];
+        favoritesSet = new Set(favorites.map(f => f.hallTicket.toUpperCase()));
+        renderFavoritesList(favorites);
+    } catch (_) {
+        // Silently fail if backend not reachable
+    }
+}
+
+function renderFavoritesList(favorites) {
+    const container = document.getElementById('favoritesList');
+    if (!favorites.length) {
+        container.innerHTML = '<div class="fav-empty">No favorites saved yet. Star a student\'s result to save them here.</div>';
+        return;
+    }
+    container.innerHTML = favorites.map(f => `
+        <div class="fav-item" id="fav-${f.hallTicket}">
+            <div class="fav-info">
+                <span class="fav-ht">${f.hallTicket}</span>
+                <span class="fav-label">${f.label !== f.hallTicket ? f.label : ''}</span>
+            </div>
+            <div class="fav-actions">
+                <button class="action-btn" onclick="quickFetch('${f.hallTicket}')" title="Fetch results">👁</button>
+                <button class="action-btn" onclick="removeFav('${f.hallTicket}')" title="Remove">✕</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function toggleFavorite(hallTicket, name) {
+    if (!hallTicket) return;
+    const ht = hallTicket.toUpperCase();
+    if (favoritesSet.has(ht)) {
+        await removeFav(ht);
+    } else {
+        await addFav(ht, name);
+    }
+    // Re-render profile star button
+    if (currentResults) renderDashboard(currentResults);
+}
+
+async function toggleFavoriteFromBatch(hallTicket, name, btn) {
+    const ht = hallTicket.toUpperCase();
+    if (favoritesSet.has(ht)) {
+        await removeFav(ht);
+        btn.classList.remove('fav-active');
+    } else {
+        await addFav(ht, name);
+        btn.classList.add('fav-active');
+    }
+}
+
+async function addFav(hallTicket, label) {
+    try {
+        await fetch(`${API_BASE_URL}/favorites`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ hallTicket, label })
+        });
+        favoritesSet.add(hallTicket.toUpperCase());
+        await loadFavorites();
+    } catch (err) {
+        alert('Could not save favorite: ' + err.message);
+    }
+}
+
+async function removeFav(hallTicket) {
+    try {
+        await fetch(`${API_BASE_URL}/favorites/${encodeURIComponent(hallTicket)}`, { method: 'DELETE' });
+        favoritesSet.delete(hallTicket.toUpperCase());
+        await loadFavorites();
+    } catch (err) {
+        alert('Could not remove favorite: ' + err.message);
+    }
+}
+
+async function quickFetch(hallTicket) {
+    document.getElementById('hallTicket').value = hallTicket;
+    searchContainer.classList.remove('centered');
+    errorState.style.display = 'none';
+    dashboard.style.display = 'none';
+    loadingState.style.display = 'block';
+    try {
+        await fetchResults({ hallTicket });
+    } catch (err) {
+        showError(err.message);
+    } finally {
+        loadingState.style.display = 'none';
+    }
+    dashboard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function fetchAllFavorites() {
+    const favorites = [...favoritesSet];
+    if (!favorites.length) {
+        alert('No favorites saved yet.');
+        return;
+    }
+    document.getElementById('batchInput').value = favorites.join('\n');
+    switchBatchTab('batch', document.querySelectorAll('.batch-tab')[0]);
+    await startBatchFetch();
+}
+

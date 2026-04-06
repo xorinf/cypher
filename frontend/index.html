@@ -54,6 +54,74 @@
             <div id="errorState" class="compact-error" style="display: none;"></div>
         </div>
 
+        <!-- Batch Fetch & Favorites Panel -->
+        <div id="batchPanel" class="batch-panel" style="display: none;">
+            <!-- Tab Bar -->
+            <div class="batch-tabs">
+                <button class="batch-tab active" onclick="switchBatchTab('batch', this)">Batch Fetch</button>
+                <button class="batch-tab" onclick="switchBatchTab('favorites', this)">⭐ Favorites</button>
+            </div>
+
+            <!-- Batch Fetch Tab -->
+            <div id="batchTab" class="batch-tab-content">
+                <p class="batch-hint">Enter one roll number per line, or separate with commas. You can also upload a CSV file.</p>
+                <textarea id="batchInput" class="batch-textarea" placeholder="E.g.&#10;22A91A0501&#10;22A91A0502&#10;22A91A0503" rows="5"></textarea>
+                <div class="batch-actions">
+                    <label class="csv-upload-btn">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        Upload CSV
+                        <input type="file" id="csvFileInput" accept=".csv,.txt" style="display:none" onchange="loadCSVFile(this)">
+                    </label>
+                    <button class="btn-primary" onclick="startBatchFetch()">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        Fetch All
+                    </button>
+                </div>
+                <div id="batchLoading" style="display:none;" class="batch-loading">
+                    <div class="mini-loader"></div>
+                    <span id="batchProgress">Fetching results…</span>
+                </div>
+            </div>
+
+            <!-- Favorites Tab -->
+            <div id="favoritesTab" class="batch-tab-content" style="display:none;">
+                <div id="favoritesList" class="favorites-list">
+                    <div class="fav-empty">No favorites saved yet. Star a student's result to save them here.</div>
+                </div>
+                <div class="batch-actions" style="margin-top: 1rem;">
+                    <button class="btn-primary" onclick="fetchAllFavorites()">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                        Fetch All Favorites
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Batch Results Table -->
+        <div id="batchResults" style="display: none;" class="batch-results-panel">
+            <div class="batch-results-header">
+                <h3>Batch Results</h3>
+                <div id="batchSummaryBadge" class="batch-summary-badge"></div>
+            </div>
+            <div class="batch-table-wrapper">
+                <table class="batch-table">
+                    <thead>
+                        <tr>
+                            <th>Hall Ticket</th>
+                            <th>Name</th>
+                            <th>Program</th>
+                            <th>CGPA</th>
+                            <th>Backlogs</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="batchTableBody"></tbody>
+                </table>
+            </div>
+            <div id="batchErrors" class="batch-errors" style="display:none;"></div>
+        </div>
+
         <!-- Results Dashboard -->
         <div id="resultsDashboard" class="dashboard" style="display: none;">
             <!-- Hero Profile Section -->
