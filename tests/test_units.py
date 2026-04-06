@@ -17,6 +17,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 
 from services.parser import ResultsParser
 from services.analytics import AnalyticsEngine
+from services.storage import FavoritesStorage
 
 # Get the fixtures directory path
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), 'fixtures')
@@ -439,7 +440,6 @@ class TestFavoritesStorage:
     @pytest.fixture(autouse=True)
     def setup(self, tmp_path):
         """Create a fresh FavoritesStorage backed by a temp file."""
-        from services.storage import FavoritesStorage
         self.fav_file = str(tmp_path / 'test_favorites.json')
         self.storage = FavoritesStorage(filepath=self.fav_file)
 
@@ -535,7 +535,6 @@ class TestFavoritesStorage:
 
     def test_favorites_persist_across_instances(self):
         """Data written by one instance should be readable by another."""
-        from services.storage import FavoritesStorage
         self.storage.add_favorite('22A91A0501', 'Persist Test')
         # Create a new instance pointing at the same file
         storage2 = FavoritesStorage(filepath=self.fav_file)

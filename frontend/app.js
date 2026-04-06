@@ -3,8 +3,10 @@
  */
 
 const API_BASE_URL = 'http://localhost:5001/api';
+const MIN_ROLL_NUMBER_LENGTH = 5;
 let currentResults = null;
 let chartInstance = null;
+let favoritesSet = new Set(); // cache of saved hall tickets (uppercase)
 
 // DOM Elements
 const searchContainer = document.getElementById('searchContainer');
@@ -234,7 +236,7 @@ function loadCSVFile(input) {
 
 async function startBatchFetch() {
     const raw = document.getElementById('batchInput').value;
-    const rollNumbers = raw.split(/[\r\n,]+/).map(r => r.trim().toUpperCase()).filter(r => r.length >= 5);
+    const rollNumbers = raw.split(/[\r\n,]+/).map(r => r.trim().toUpperCase()).filter(r => r.length >= MIN_ROLL_NUMBER_LENGTH);
 
     if (rollNumbers.length === 0) {
         alert('Please enter at least one valid roll number (min 5 characters).');
@@ -328,8 +330,6 @@ function viewBatchStudent(hallTicket, index) {
 // ============================================================
 // Favorites
 // ============================================================
-
-let favoritesSet = new Set(); // cache of saved hall tickets (uppercase)
 
 async function loadFavorites() {
     try {

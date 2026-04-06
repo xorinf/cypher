@@ -161,15 +161,16 @@ def create_app():
                 return jsonify({'error': 'No file provided'}), 400
 
             exam_type = request.form.get('examType', '')
-            stream = io.TextIOWrapper(uploaded_file.stream, encoding='utf-8-sig')
-            reader = csv.reader(stream)
-            for row in reader:
-                if not row:
-                    continue
-                # Accept the first non-empty column value
-                value = row[0].strip().upper()
-                if value and not value.lower().startswith('hall') and not value.lower().startswith('roll'):
-                    roll_numbers.append(value)
+            with io.TextIOWrapper(uploaded_file.stream, encoding='utf-8-sig') as stream:
+                reader = csv.reader(stream)
+                for row in reader:
+                    if not row:
+                        continue
+                    # Accept the first non-empty column value
+                    value = row[0].strip().upper()
+                    value_lower = value.lower()
+                    if value and not value_lower.startswith('hall') and not value_lower.startswith('roll'):
+                        roll_numbers.append(value)
         else:
             data = request.get_json()
             if not data:
@@ -215,7 +216,7 @@ def create_app():
 
             except Exception as exc:
                 logger.error(f"Batch error for {ht}: {exc}")
-                errors.append({'hallTicket': ht, 'error': str(exc)})
+                errors.append({'hallTicket': ht, 'error': 'Failed to fetch result'})
 
         # Identify top performer by CGPA
         top_performer = None
