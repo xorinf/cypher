@@ -2,7 +2,7 @@
    Premium Glassmorphism Design
    =========================== */
 :root {
-    --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    --primary-gradient: #6366f1;
     --bg-dark: #0f172a;
     --bg-card: rgba(30, 41, 59, 0.6);
     --bg-glass: rgba(15, 23, 42, 0.85);
@@ -24,8 +24,10 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(
 
 /* Dynamic Background */
 .bg-decoration {
-    position: fixed; inset: 0; z-index: -1;
-    background: radial-gradient(circle at 50% -20%, rgba(99, 102, 241, 0.15) 0%, transparent 60%);
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: #0f172a;
 }
 
 .container { max-width: 1200px; margin: 0 auto; padding: 2rem; }
@@ -57,7 +59,11 @@ body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(
 .brand { display: flex; align-items: center; gap: 0.75rem; }
 .logo-icon svg { width: 32px; height: 32px; }
 .centered .logo-icon svg { width: 48px; height: 48px; }
-.brand h1 { font-size: 1.5rem; font-weight: 800; background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.brand h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #6366f1;
+}
 .centered .brand h1 { font-size: 2.5rem; }
 
 .compact-form {
