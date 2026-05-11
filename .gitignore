@@ -54,5 +54,5 @@ mobile/venv*/
 release/
 
 
-# Local backup
-legacy/
+# Favorites data (user-specific, not committed)
+data/favorites.json

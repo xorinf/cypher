@@ -5,6 +5,8 @@ Main API server for CampX results retrieval and analysis
 
 from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
+import csv
+import io
 import sys
 import os
 
@@ -19,6 +21,7 @@ from services.scraper import CampXScraper
 from services.parser import ResultsParser
 from services.analytics import AnalyticsEngine
 from services.exporter import ResultsExporter
+from services.storage import FavoritesStorage
 
 # Initialize logger
 logger = setup_logger('api')
@@ -34,6 +37,7 @@ def create_app():
     parser = ResultsParser()
     analytics = AnalyticsEngine()
     exporter = ResultsExporter()
+    favorites_storage = FavoritesStorage()
     
     @app.route('/api/health', methods=['GET'])
     def health_check():
@@ -134,6 +138,143 @@ def create_app():
             logger.error(f"Export Error: {str(e)}")
             return jsonify({'error': f'Export failed: {str(e)}'}), 500
             
+    @app.route('/api/batch-fetch', methods=['POST'])
+    def batch_fetch():
+        """
+        Fetch results for multiple roll numbers at once.
+
+        Accepts either:
+        - JSON body: { "rollNumbers": ["HT001", "HT002", ...], "examType": "" }
+        - Multipart form with a CSV file upload (field name: "file")
+          The CSV may be a single column of hall tickets or have a header row.
+        """
+        from utils.validators import validate_hall_ticket, validate_exam_type, sanitize_input
+
+        roll_numbers = []
+        exam_type = ''
+
+        content_type = request.content_type or ''
+        if 'multipart/form-data' in content_type:
+            # CSV file upload
+            uploaded_file = request.files.get('file')
+            if not uploaded_file:
+                return jsonify({'error': 'No file provided'}), 400
+
+            exam_type = request.form.get('examType', '')
+            with io.TextIOWrapper(uploaded_file.stream, encoding='utf-8-sig') as stream:
+                reader = csv.reader(stream)
+                for row in reader:
+                    if not row:
+                        continue
+                    # Accept the first non-empty column value
+                    value = row[0].strip().upper()
+                    value_lower = value.lower()
+                    if value and not value_lower.startswith('hall') and not value_lower.startswith('roll'):
+                        roll_numbers.append(value)
+        else:
+            data = request.get_json()
+            if not data:
+                return jsonify({'error': 'Invalid request body'}), 400
+            roll_numbers = [str(r).strip().upper() for r in data.get('rollNumbers', []) if r]
+            exam_type = data.get('examType', '')
+
+        if not roll_numbers:
+            return jsonify({'error': 'No roll numbers provided'}), 400
+
+        if len(roll_numbers) > 50:
+            return jsonify({'error': 'Maximum 50 roll numbers per batch request'}), 400
+
+        if exam_type:
+            is_valid, error_msg = validate_exam_type(exam_type)
+            if not is_valid:
+                return jsonify({'error': error_msg}), 400
+
+        results = []
+        errors = []
+
+        for ht in roll_numbers:
+            ht = sanitize_input(ht, max_length=20)
+            is_valid, error_msg = validate_hall_ticket(ht)
+            if not is_valid:
+                errors.append({'hallTicket': ht, 'error': error_msg})
+                continue
+
+            try:
+                logger.info(f"Batch fetching: {ht}")
+                api_data = scraper.fetch_results(ht, exam_type)
+                if not api_data:
+                    errors.append({'hallTicket': ht, 'error': 'Result not found'})
+                    continue
+
+                parsed = parser.parse_api_response(api_data)
+                if not parsed:
+                    errors.append({'hallTicket': ht, 'error': 'Unable to parse results'})
+                    continue
+
+                analytics_data = analytics.calculate_analytics(parsed)
+                results.append({**parsed, 'analytics': analytics_data})
+
+            except Exception as exc:
+                logger.error(f"Batch error for {ht}: {exc}")
+                errors.append({'hallTicket': ht, 'error': 'Failed to fetch result'})
+
+        # Identify top performer by CGPA
+        top_performer = None
+        if results:
+            top_performer = max(
+                results,
+                key=lambda r: r.get('analytics', {}).get('gpa') or 0
+            ).get('studentInfo', {}).get('hallTicket')
+
+        return jsonify({
+            'results': results,
+            'errors': errors,
+            'topPerformer': top_performer,
+            'summary': {
+                'requested': len(roll_numbers),
+                'succeeded': len(results),
+                'failed': len(errors),
+            }
+        }), 200
+
+    # ------------------------------------------------------------------
+    # Favorites endpoints
+    # ------------------------------------------------------------------
+
+    @app.route('/api/favorites', methods=['GET'])
+    def get_favorites():
+        """Return all saved favorite hall tickets."""
+        return jsonify({'favorites': favorites_storage.get_favorites()}), 200
+
+    @app.route('/api/favorites', methods=['POST'])
+    def add_favorite():
+        """Add a hall ticket to favorites."""
+        from utils.validators import validate_hall_ticket, sanitize_input
+
+        data = request.get_json()
+        if not data:
+            return jsonify({'error': 'Invalid JSON body'}), 400
+
+        hall_ticket = sanitize_input(data.get('hallTicket', ''), max_length=20)
+        label = sanitize_input(data.get('label', ''), max_length=60)
+
+        is_valid, error_msg = validate_hall_ticket(hall_ticket)
+        if not is_valid:
+            return jsonify({'error': error_msg}), 400
+
+        entry = favorites_storage.add_favorite(hall_ticket, label)
+        return jsonify({'favorite': entry}), 200
+
+    @app.route('/api/favorites/<hall_ticket>', methods=['DELETE'])
+    def remove_favorite(hall_ticket):
+        """Remove a hall ticket from favorites."""
+        from utils.validators import sanitize_input
+        hall_ticket = sanitize_input(hall_ticket.upper(), max_length=20)
+        removed = favorites_storage.remove_favorite(hall_ticket)
+        if not removed:
+            return jsonify({'error': 'Favorite not found'}), 404
+        return jsonify({'message': f'{hall_ticket} removed from favorites'}), 200
+
     return app
 
 if __name__ == '__main__':

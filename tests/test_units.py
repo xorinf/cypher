@@ -9,6 +9,7 @@ Or: python tests/test_units.py
 import sys
 import os
 import json
+import tempfile
 import pytest
 
 # Add parent directory to path
@@ -16,6 +17,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'backend'))
 
 from services.parser import ResultsParser
 from services.analytics import AnalyticsEngine
+from services.storage import FavoritesStorage
 
 # Get the fixtures directory path
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), 'fixtures')
@@ -426,6 +428,119 @@ def run_tests():
     
     # Run pytest
     pytest.main([__file__, '-v', '--tb=short'])
+
+
+# ===========================================================================
+# FavoritesStorage Tests
+# ===========================================================================
+
+class TestFavoritesStorage:
+    """Unit tests for the FavoritesStorage service."""
+
+    @pytest.fixture(autouse=True)
+    def setup(self, tmp_path):
+        """Create a fresh FavoritesStorage backed by a temp file."""
+        self.fav_file = str(tmp_path / 'test_favorites.json')
+        self.storage = FavoritesStorage(filepath=self.fav_file)
+
+    # ------------------------------------------------------------------
+    # get_favorites
+    # ------------------------------------------------------------------
+
+    def test_get_favorites_initially_empty(self):
+        """A newly created storage should return an empty list."""
+        result = self.storage.get_favorites()
+        assert result == []
+
+    # ------------------------------------------------------------------
+    # add_favorite
+    # ------------------------------------------------------------------
+
+    def test_add_favorite_returns_entry(self):
+        """add_favorite should return the saved entry."""
+        entry = self.storage.add_favorite('22A91A0501', 'Test Student')
+        assert entry['hallTicket'] == '22A91A0501'
+        assert entry['label'] == 'Test Student'
+        assert 'savedAt' in entry
+
+    def test_add_favorite_normalises_to_uppercase(self):
+        """Hall ticket should always be stored in upper-case."""
+        self.storage.add_favorite('22a91a0501')
+        favs = self.storage.get_favorites()
+        assert favs[0]['hallTicket'] == '22A91A0501'
+
+    def test_add_favorite_uses_hall_ticket_as_label_when_none_given(self):
+        """When no label is provided the hall ticket itself becomes the label."""
+        self.storage.add_favorite('22A91A0502')
+        favs = self.storage.get_favorites()
+        assert favs[0]['label'] == '22A91A0502'
+
+    def test_add_favorite_no_duplicates(self):
+        """Adding the same hall ticket twice should not create duplicates."""
+        self.storage.add_favorite('22A91A0501', 'A')
+        self.storage.add_favorite('22a91a0501', 'B')  # lowercase duplicate
+        favs = self.storage.get_favorites()
+        assert len(favs) == 1
+
+    def test_add_multiple_favorites(self):
+        """Multiple different hall tickets can be saved."""
+        self.storage.add_favorite('22A91A0501')
+        self.storage.add_favorite('22A91A0502')
+        self.storage.add_favorite('22A91A0503')
+        assert len(self.storage.get_favorites()) == 3
+
+    # ------------------------------------------------------------------
+    # remove_favorite
+    # ------------------------------------------------------------------
+
+    def test_remove_favorite_success(self):
+        """remove_favorite returns True and deletes the entry."""
+        self.storage.add_favorite('22A91A0501')
+        removed = self.storage.remove_favorite('22A91A0501')
+        assert removed is True
+        assert self.storage.get_favorites() == []
+
+    def test_remove_favorite_case_insensitive(self):
+        """Removal should work regardless of case."""
+        self.storage.add_favorite('22A91A0501')
+        removed = self.storage.remove_favorite('22a91a0501')
+        assert removed is True
+
+    def test_remove_favorite_not_found_returns_false(self):
+        """remove_favorite returns False when the entry does not exist."""
+        result = self.storage.remove_favorite('NONEXISTENT')
+        assert result is False
+
+    # ------------------------------------------------------------------
+    # is_favorite
+    # ------------------------------------------------------------------
+
+    def test_is_favorite_true(self):
+        """is_favorite returns True for a saved hall ticket."""
+        self.storage.add_favorite('22A91A0501')
+        assert self.storage.is_favorite('22A91A0501') is True
+
+    def test_is_favorite_false(self):
+        """is_favorite returns False when not saved."""
+        assert self.storage.is_favorite('22A91A0999') is False
+
+    def test_is_favorite_case_insensitive(self):
+        """is_favorite is case-insensitive."""
+        self.storage.add_favorite('22A91A0501')
+        assert self.storage.is_favorite('22a91a0501') is True
+
+    # ------------------------------------------------------------------
+    # Persistence
+    # ------------------------------------------------------------------
+
+    def test_favorites_persist_across_instances(self):
+        """Data written by one instance should be readable by another."""
+        self.storage.add_favorite('22A91A0501', 'Persist Test')
+        # Create a new instance pointing at the same file
+        storage2 = FavoritesStorage(filepath=self.fav_file)
+        favs = storage2.get_favorites()
+        assert len(favs) == 1
+        assert favs[0]['hallTicket'] == '22A91A0501'
 
 
 if __name__ == '__main__':
